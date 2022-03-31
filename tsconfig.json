@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "outDir": "dist",
+        "lib": ["ES6", "DOM", "ES2017", "ES2019"],
+        "target": "ES5",
+        "jsx": "react",
+        "allowJs": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+}
