@@ -44,7 +44,7 @@ const KEY_BTN_DEFAULT_CLASS = `flex
                                items-center
                                bg-gray-400
                                text-white
-                               text-2xl
+                               text-xl
                                border-2
                                rounded-md
                                cursor-pointer
