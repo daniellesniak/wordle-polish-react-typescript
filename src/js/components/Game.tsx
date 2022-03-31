@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
 import Row from "./Row"
 import Keyboard from "./Keyboard"
+import MessageBox from "./MessageBox"
 import { db } from "../db"
 
 const ROWS_NUMBER: number = 6
@@ -21,7 +22,7 @@ const Game: FC = () => {
     const [activeRowLetters, setActiveRowLetters] = useState([])
     const [guesses, setGuesses] = useState([])
     const [currentGameStatus, setCurrentGameStatus] = useState(GameStatus.IN_PROGRESS)
-
+    
     if (wordToGuess === '') {
         (async() => {
             setWordToGuess(await getRandomWordFromDB(wordToGuessLength))
@@ -51,32 +52,34 @@ const Game: FC = () => {
                 />
     })
 
-    return (
-        <>
-            <div className="flex flex-col">
-                { rows }
-            </div>
-            
-            <Keyboard
-                activeRowIndex={activeRowIndex}
-                activeRowLetters={activeRowLetters}
-                noOfLettersAllowed={wordToGuessLength}
-                guesses={guesses}
-                wordToGuessLetters={wordToGuess.split('')}
-                currentGameStatus={currentGameStatus}
-                handleActiveRowIndexChange={setActiveRowIndex}
-                handleActiveRowLettersChange={setActiveRowLetters}
-                handleGuessesChange={setGuesses}
-            ></Keyboard>
-            
-            <ToastContainer
-                position="top-center"
-                autoClose={5000}
-                closeOnClick
-                theme="dark"
-            />
-        </>
-    )
+    return wordToGuess.length <= 0
+                ? <MessageBox message="Loading..."></MessageBox>
+                : (
+                    <>
+                        <div className="flex flex-col">
+                            { rows }
+                        </div>
+                        
+                        <Keyboard
+                            activeRowIndex={activeRowIndex}
+                            activeRowLetters={activeRowLetters}
+                            noOfLettersAllowed={wordToGuessLength}
+                            guesses={guesses}
+                            wordToGuessLetters={wordToGuess.split('')}
+                            currentGameStatus={currentGameStatus}
+                            handleActiveRowIndexChange={setActiveRowIndex}
+                            handleActiveRowLettersChange={setActiveRowLetters}
+                            handleGuessesChange={setGuesses}
+                        ></Keyboard>
+                        
+                        <ToastContainer
+                            position="top-center"
+                            autoClose={5000}
+                            closeOnClick
+                            theme="dark"
+                        />
+                    </>
+                )
 }
 
 export default Game
