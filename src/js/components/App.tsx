@@ -1,7 +1,20 @@
-import React from "react"
+import React, { useState } from "react"
 import Game from "./Game"
+import { db } from "../db"
+import { importWordsToDB, prepareRecords } from "../wordsImporter"
+import nouns from "../nouns"
 
 const App: React.FC = () => {
+    const [dbInitialized, setDbInitialized] = useState(false);
+
+    (async() => {
+        if (await db.words.count() > 0) {
+            setDbInitialized(true)
+        } else {
+            setDbInitialized(await importWordsToDB(prepareRecords(nouns)))
+        }
+    })()
+
     return (
         <div className="m-auto" style={{maxWidth: '500px'}}>
             <div className="flex justify-center items-center py-3">
@@ -10,7 +23,7 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            <Game></Game>
+            <Game dbInitialized={dbInitialized}></Game>
         </div>
     )
 }

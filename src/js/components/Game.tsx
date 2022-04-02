@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
 import Row from "./Row"
@@ -6,7 +6,7 @@ import Keyboard from "./Keyboard"
 import MessageBox from "./MessageBox"
 import { db } from "../db"
 
-const ROWS_NUMBER: number = 6
+const ROWS_NUMBER = 6
 
 export enum GameStatus {
     WIN = 1,
@@ -15,14 +15,24 @@ export enum GameStatus {
     WIN_LOSE = -11
 }
 
-const Game: FC = () => {
+type Props = {
+    dbInitialized: boolean
+}
+
+const Game: FC<Props> = (props: Props) => {
+
+    const dots = useSign('.')
     const [wordToGuess, setWordToGuess] = useState('')
     const wordToGuessLength = 5
     const [activeRowIndex, setActiveRowIndex] = useState(0)
     const [activeRowLetters, setActiveRowLetters] = useState([])
     const [guesses, setGuesses] = useState([])
     const [currentGameStatus, setCurrentGameStatus] = useState(GameStatus.IN_PROGRESS)
-    
+
+    if (! props.dbInitialized) {
+        return <MessageBox message={'Initializing database' + dots}></MessageBox>
+    }
+
     if (wordToGuess === '') {
         (async() => {
             setWordToGuess(await getRandomWordFromDB(wordToGuessLength))
@@ -103,4 +113,22 @@ export function determineGameStatus(guesses: Array<Array<string>>, wordToGuess: 
     }
 
     return GameStatus.IN_PROGRESS
+}
+
+function useSign(sigleSignValue: string, maxLength = 3) {
+    const [signs, setSigns] = useState(sigleSignValue)
+
+    useEffect(() => {
+        const signsTimer = setTimeout(() => {
+            if (signs.length === maxLength) {
+                setSigns(sigleSignValue)
+            } else {
+                setSigns(signs + sigleSignValue)
+            }
+        }, 1000)
+
+        return () => clearTimeout(signsTimer)
+    }, [signs, sigleSignValue, maxLength])
+
+    return signs
 }
