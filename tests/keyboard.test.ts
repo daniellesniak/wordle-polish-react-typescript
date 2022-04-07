@@ -1,5 +1,5 @@
-import { determineHighlightClass } from "../components/Keyboard"
-import { typeClasses, Type } from "../components/Letter"
+import { determineHighlightClass } from "../src/js/components/Keyboard"
+import { typeClasses, Type } from "../src/js/components/Letter"
 
 const guesses: Array<Array<string>> = [
     ['f', 'i', 'd', 'ż', 'i']

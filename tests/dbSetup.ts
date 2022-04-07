@@ -1,8 +1,8 @@
 require("fake-indexeddb/auto");
 
-import { importWordsToDB, prepareRecords } from "../wordsImporter"
+import { importWordsToDB, prepareRecords } from "../src/js/wordsImporter"
 
-import { db, Word } from "../db"
+import { db, Word } from "../src/js/db"
 
 export const words: Array<string> = ['fidżi', 'jestem', 'może']
 export const correctlyPreparedRecords: Array<Word> = [

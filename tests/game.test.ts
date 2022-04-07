@@ -1,4 +1,4 @@
-import { determineGameStatus, GameStatus, getRandomWordFromDB } from "../components/Game"
+import { determineGameStatus, GameStatus, getRandomWordFromDB } from "../src/js/components/Game"
 import { initDB, correctImportedRecords } from "./dbSetup"
 
 beforeAll(async() => {
@@ -10,7 +10,7 @@ export const guesses: Array<Array<string>> = [
     ['p', 'a', 't', 'y', 'k']
 ]
 
-const wordNotInGuesses: string = 'incor'
+const wordNotInGuesses = 'incor'
 
 const ROWS_NUMBER: number = guesses.length
 
@@ -29,7 +29,7 @@ test('requirements for win or lose not met so gives in progress', () => {
 test('words are fetched from db properly', async() => {
     expect.assertions(2)
 
-    const wordLength: number = 5
+    const wordLength = 5
 
     const fetchedWord: string = await getRandomWordFromDB(wordLength)
 

@@ -1,6 +1,6 @@
 import { initDB, words, correctlyPreparedRecords, correctImportedRecords } from "./dbSetup"
-import { db, Word } from "../db"
-import { prepareRecords } from "../wordsImporter"
+import { db, Word } from "../src/js/db"
+import { prepareRecords } from "../src/js/wordsImporter"
 
 window.alert = jest.fn()
 
