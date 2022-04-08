@@ -3,7 +3,6 @@ import { ToastContainer, toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
 import Row from "./Row"
 import Keyboard from "./Keyboard"
-import MessageBox from "./MessageBox"
 import { db } from "../db"
 
 const ROWS_NUMBER = 6
@@ -15,21 +14,13 @@ export enum GameStatus {
     WIN_LOSE = -11
 }
 
-type Props = {
-    dbInitialized: boolean
-}
-
-const Game: FC<Props> = (props: Props) => {
+const Game: FC = () => {
     const [wordToGuess, setWordToGuess] = useState('')
     const wordToGuessLength = 5
     const [activeRowIndex, setActiveRowIndex] = useState(0)
     const [activeRowLetters, setActiveRowLetters] = useState([])
     const [guesses, setGuesses] = useState([])
     const [currentGameStatus, setCurrentGameStatus] = useState(GameStatus.IN_PROGRESS)
-
-    if (! props.dbInitialized) {
-        return <MessageBox message={'Initializing database'}></MessageBox>
-    }
 
     if (wordToGuess === '') {
         (async() => {
@@ -60,9 +51,7 @@ const Game: FC<Props> = (props: Props) => {
                 />
     })
 
-    return wordToGuess.length <= 0
-                ? <MessageBox message="Loading..."></MessageBox>
-                : (
+    return (
                     <>
                         <div className="flex flex-col">
                             { rows }

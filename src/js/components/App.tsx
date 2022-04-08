@@ -3,6 +3,7 @@ import Game from "./Game"
 import { db } from "../db"
 import { importWordsToDB, prepareRecords } from "../wordsImporter"
 import nouns from "../nouns"
+import LoadingMessage from "./LoadingMessage"
 
 const App: React.FC = () => {
     const [dbInitialized, setDbInitialized] = useState(false);
@@ -19,11 +20,14 @@ const App: React.FC = () => {
         <div className="m-auto" style={{maxWidth: '500px'}}>
             <div className="flex justify-center items-center py-3">
                 <div>
-                    <h1 className="text-4xl font-bold text-gray-100 select-none">Wordle</h1>
+                    <h1 className="text-4xl font-bold text-gray-100 select-none">Wordle PL</h1>
                 </div>
             </div>
 
-            <Game dbInitialized={dbInitialized}></Game>
+            { dbInitialized 
+                    ? <Game></Game> 
+                    : <LoadingMessage message={'Initializing database'}></LoadingMessage>
+            }
         </div>
     )
 }

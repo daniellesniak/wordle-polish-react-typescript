@@ -6,7 +6,7 @@ interface Props {
     ellipsisSign?: string
 }
 
-const MessageBox: FC<Props> = (props: Props) => {
+const LoadingMessage: FC<Props> = (props: Props) => {
     const dots = useEllipsis(props.ellipsisSign)
 
     return (
@@ -34,9 +34,9 @@ function useEllipsis(ellipsisSign: string, maxLength = 3) {
     return ellipsis
 }
 
-MessageBox.defaultProps = {
+LoadingMessage.defaultProps = {
     withEllipsis: true,
     ellipsisSign: '.'
 }
 
-export default MessageBox
+export default LoadingMessage
