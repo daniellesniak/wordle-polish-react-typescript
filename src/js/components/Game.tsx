@@ -52,31 +52,31 @@ const Game: FC = () => {
     })
 
     return (
-                    <>
-                        <div className="flex flex-col">
-                            { rows }
-                        </div>
-                        
-                        <Keyboard
-                            activeRowIndex={activeRowIndex}
-                            activeRowLetters={activeRowLetters}
-                            noOfLettersAllowed={wordToGuessLength}
-                            guesses={guesses}
-                            wordToGuessLetters={wordToGuess.split('')}
-                            currentGameStatus={currentGameStatus}
-                            handleActiveRowIndexChange={setActiveRowIndex}
-                            handleActiveRowLettersChange={setActiveRowLetters}
-                            handleGuessesChange={setGuesses}
-                        ></Keyboard>
-                        
-                        <ToastContainer
-                            position="top-center"
-                            autoClose={5000}
-                            closeOnClick
-                            theme="dark"
-                        />
-                    </>
-                )
+                <>
+                    <div className="flex flex-col">
+                        { rows }
+                    </div>
+                    
+                    <Keyboard
+                        activeRowIndex={activeRowIndex}
+                        activeRowLetters={activeRowLetters}
+                        noOfLettersAllowed={wordToGuessLength}
+                        guesses={guesses}
+                        wordToGuessLetters={wordToGuess.split('')}
+                        currentGameStatus={currentGameStatus}
+                        handleActiveRowIndexChange={setActiveRowIndex}
+                        handleActiveRowLettersChange={setActiveRowLetters}
+                        handleGuessesChange={setGuesses}
+                    ></Keyboard>
+                    
+                    <ToastContainer
+                        position="top-center"
+                        autoClose={5000}
+                        closeOnClick
+                        theme="dark"
+                    />
+                </>
+            )
 }
 
 export default Game
