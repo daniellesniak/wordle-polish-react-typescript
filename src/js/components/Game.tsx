@@ -15,18 +15,12 @@ export enum GameStatus {
 }
 
 const Game: FC = () => {
-    const [wordToGuess, setWordToGuess] = useState('')
     const wordToGuessLength = 5
+    const wordToGuess = useWordToGuess(wordToGuessLength)
     const [activeRowIndex, setActiveRowIndex] = useState(0)
     const [activeRowLetters, setActiveRowLetters] = useState([])
     const [guesses, setGuesses] = useState([])
     const [currentGameStatus, setCurrentGameStatus] = useState(GameStatus.IN_PROGRESS)
-
-    if (wordToGuess === '') {
-        (async() => {
-            setWordToGuess(await getRandomWordFromDB(wordToGuessLength))
-        })()
-    }
 
     const determinedGameStatus = currentGameStatus === GameStatus.IN_PROGRESS ? determineGameStatus(guesses, wordToGuess, ROWS_NUMBER) : null
     
@@ -100,4 +94,16 @@ export function determineGameStatus(guesses: Array<Array<string>>, wordToGuess: 
     }
 
     return GameStatus.IN_PROGRESS
+}
+
+function useWordToGuess(wordLength: number) {
+    const [wordToGuess, setWordToGuess] = useState('')
+
+    if (wordToGuess === '') {
+        (async() => {
+            setWordToGuess(await getRandomWordFromDB(wordLength))
+        })()
+    }
+
+    return wordToGuess
 }
