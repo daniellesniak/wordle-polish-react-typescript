@@ -7,7 +7,7 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "outDir": "dist",
-        "lib": ["ES6", "DOM", "ES2017", "ES2019"],
+        "lib": ["ES6", "DOM", "ES2017"],
         "target": "ES5",
         "jsx": "react",
         "allowJs": true

@@ -23,9 +23,9 @@ const App: React.FC = () => {
                     <h1 className="text-4xl font-bold text-gray-100 select-none">Wordle PL</h1>
                 </div>
             </div>
-
+            
             { dbInitialized 
-                    ? <Game></Game> 
+                    ? <Game></Game>
                     : <LoadingMessage message={'Initializing database'}></LoadingMessage>
             }
         </div>

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "author": "",
   "license": "ISC",
@@ -16,7 +17,8 @@
     "dexie-react-hooks": "^1.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-toastify": "^8.2.0"
+    "react-toastify": "^8.2.0",
+    "tailwind-merge": "^1.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",

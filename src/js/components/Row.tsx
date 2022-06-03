@@ -1,31 +1,19 @@
-import React, { useState } from "react"
+import React from "react"
 import Letter from "./Letter"
+import { type RowLetter } from "./Game"
 
 type Props = {
-    isActiveRow: boolean,
-    isLocked: boolean,
-    noOfLetters: number,
-    letters: Array<string>
-    wordToGuessLetters: Array<string>
+    rowLetters: Array<RowLetter>
 }
 
 const Row: React.FC<Props> = (props: Props) => {
-    const [letters, setLetters] = useState(props.letters)
-
     return (
         <div className="flex justify-center">
-            {
-                Array(props.noOfLetters).fill(0).map((v: number, i: number) => {
-                    return <Letter
-                                key={i}
-                                index={i}
-                                wordToGuessLetters={props.wordToGuessLetters}
-                                letters={props.letters}
-                                assignedLetter={props.letters ? props.letters[i] : null}
-                                isLocked={props.isLocked}
-                            ></Letter>
-                })
-            }
+            {props.rowLetters.map((rowLetter: RowLetter, i: number) => {
+                return (
+                    <Letter key={i} rowLetter={rowLetter}></Letter>
+                )
+            })}
         </div>
     )
 }

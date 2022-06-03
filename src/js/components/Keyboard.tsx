@@ -1,18 +1,16 @@
 import React, { FC } from "react"
-import { Type, typeClasses } from "./Letter"
-import { GameStatus } from "./Game"
-import { db } from "../db"
-import { useLiveQuery } from "dexie-react-hooks"
-import { toast } from "react-toastify"
+import KeyboardButton from "./KeyboardButton"
+import KeyboardCommandButton from "./KeyboardCommandButton"
+import { RowLetterStatus, type RowLetter } from "./Game"
 
-enum SPECIAL_BTNS {
-    ENTER = 'enter',
-    BACKSPACE = 'backspace'
+export enum CMD_BTNS {
+    ENTER = 'Enter',
+    BACKSPACE = 'Backspace'
 }
 
-const keyboardBtns =  [
+export const keyboardLayout: string[][] | CMD_BTNS[][] = [
     [
-        'ą', 'ć', 'ę', 'ń', 'ó', 'ś', 'ź', 'ż'
+        'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż'
     ],
     [
         'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'
@@ -21,20 +19,14 @@ const keyboardBtns =  [
         'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'
     ],
     [
-        SPECIAL_BTNS.ENTER, 'z', 'x', 'c', 'v' , 'b', 'n', 'm', SPECIAL_BTNS.BACKSPACE
+        CMD_BTNS.ENTER, 'z', 'x', 'c', 'v', 'b', 'n', 'm', CMD_BTNS.BACKSPACE
     ]
 ]
 
 type Props = {
-    activeRowIndex: number
-    activeRowLetters: Array<string>
-    noOfLettersAllowed: number
-    guesses: Array<Array<string>>
-    wordToGuessLetters: Array<string>
-    handleActiveRowIndexChange: any
-    handleActiveRowLettersChange: any
-    handleGuessesChange: any
-    currentGameStatus: GameStatus
+    handleAppendLetter: CallableFunction,
+    commandButtonsHandlers: Record<CMD_BTNS, CallableFunction>,
+    submittedRows: RowLetter[][]
 }
 
 const KEY_BTN_DEFAULT_CLASS = `flex
@@ -46,63 +38,33 @@ const KEY_BTN_DEFAULT_CLASS = `flex
                                text-white
                                text-xl
                                border-2
+                               border-gray-500
                                rounded-md
                                cursor-pointer
                                uppercase
                                select-none `
 
 const Keyboard: FC<Props> = (props: Props) => {
-    const currentWord = props.activeRowLetters.join('')
-    const isExistingWord = currentWord.length !== props.noOfLettersAllowed ? null : useLiveQuery(
-        async() => {
-            const words = await db.words
-                .where('value')
-                .equals(currentWord)
-                .toArray()
-
-            return words.length > 0
-        },
-        [currentWord]
-    )
-
-    const keyboardLayout = keyboardBtns.map((row) => {
+    const layout = keyboardLayout.map((row: string[] | CMD_BTNS[], i: number) => {
         return (
-            <div className="flex flex-row">
+            <div className="flex flex-row" key={i}>
                 {
-                    row.map((btnCaption) => {
-                        const className = KEY_BTN_DEFAULT_CLASS + determineHighlightClass(btnCaption, props.guesses, props.wordToGuessLetters)
-
-                        return (
-                            <div
-                                // key={btnCaption === SPECIAL_BTNS.ENTER ? 5000 : btnCaption === SPECIAL_BTNS.BACKSPACE ? 6000 : btnCaption.charCodeAt(0) - 96}
-                                className={className}
-                                onClick={
-                                    props.currentGameStatus === GameStatus.IN_PROGRESS
-                                    ? () => {
-                                        switch(btnCaption) {
-                                            case SPECIAL_BTNS.ENTER:
-                                                if (props.activeRowLetters.length === props.noOfLettersAllowed) {
-                                                    if (isExistingWord) {
-                                                        submitGuess(props)
-                                                    } else {
-                                                        toast('😬 Not a valid word')
-                                                    }
-                                                }
-                                                break
-                                            case SPECIAL_BTNS.BACKSPACE:
-                                                props.handleActiveRowLettersChange(popLetter(props.activeRowLetters))
-                                                break
-                                            default:
-                                                props.handleActiveRowLettersChange(addLetterToRowIfPossible(props.activeRowLetters, props.noOfLettersAllowed, btnCaption))
-                                        }
-                                    }
-                                    : null
-                                }
-                            >
-                                {btnCaption}
-                            </div>
-                        )
-                    })
+                    row.map((btnText: string | CMD_BTNS, i) =>
+                        btnText === CMD_BTNS.ENTER || btnText === CMD_BTNS.BACKSPACE
+                        ? <KeyboardCommandButton
+                            key={i}
+                            text={btnText}
+                            defaultClass={KEY_BTN_DEFAULT_CLASS}
+                            handleCommand={props.commandButtonsHandlers[btnText]}
+                          />
+                        : <KeyboardButton
+                            key={i}
+                            text={btnText}
+                            defaultClass={KEY_BTN_DEFAULT_CLASS}
+                            handleAppendLetter={props.handleAppendLetter}
+                            buttonStatus={getKeyboardButtonStatus(props.submittedRows, btnText)}
+                          />
+                    )
                 }
             </div>
         )
@@ -110,44 +72,22 @@ const Keyboard: FC<Props> = (props: Props) => {
 
     return (
         <div className="flex flex-col mt-3">
-            {keyboardLayout}
+            {layout}
         </div>
     )
 }
 
-export function determineHighlightClass(keyboardLetter: string, guesses: Array<Array<string>>, wordToGuessLetters: Array<string>) {
-    // Return default class if button was not pushed yet
-    if(! guesses.flat().includes(keyboardLetter)) {
-        return typeClasses['default']
-    }
-
-    let type = Type.ABSENT
-
-    guesses.forEach((guess: Array<string>) => {
-        if (guess.indexOf(keyboardLetter) === wordToGuessLetters.indexOf(keyboardLetter) && guess.indexOf(keyboardLetter) !== -1) {
-            type = Type.CORRECT
-        }
-        
-        if (wordToGuessLetters.includes(keyboardLetter)) {
-            type = type < Type.ELSEWHERE ? Type.ELSEWHERE : type
-        }
+export function getKeyboardButtonStatus(grid: RowLetter[][], letter: string): RowLetterStatus {
+    let status: RowLetterStatus = RowLetterStatus.DEFAULT
+    grid.forEach((row: RowLetter[]) => {
+        row.forEach((rL: RowLetter) => {
+            if (letter === rL.letter) {
+                status = status > rL.status ? status : rL.status
+            }
+        })
     })
 
-    return typeClasses[type]
-}
-
-function submitGuess(props: Props): void {
-    props.handleGuessesChange(props.guesses.concat([props.activeRowLetters]))
-    props.handleActiveRowIndexChange(props.activeRowIndex + 1)
-    props.handleActiveRowLettersChange([])
-}
-
-function addLetterToRowIfPossible(letters: Array<string>, maxLength: number, newLetter: string): Array<string> {
-    return letters.length < maxLength ? letters.concat([newLetter]) : letters
-}
-
-function popLetter(letters: Array<string>): Array<string> {
-    return letters.length > 0 ? letters.slice(0, -1) : []
+    return status
 }
 
 export default Keyboard

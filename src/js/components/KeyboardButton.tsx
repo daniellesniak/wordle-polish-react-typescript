@@ -1,0 +1,31 @@
+import React, { FC } from "react"
+import { RowLetterStatus } from "./Game"
+import { twMerge } from "tailwind-merge"
+
+type Props = {
+    text: string,
+    defaultClass: string,
+    handleAppendLetter: CallableFunction,
+    buttonStatus: RowLetterStatus
+}
+
+const KeyboardButton: FC<Props> = (props: Props) => {
+    const typeClasses = {
+        [RowLetterStatus.CORRECT]: 'bg-green-500 border-green-400',
+        [RowLetterStatus.ELSEWHERE]: 'bg-yellow-500 border-yellow-400',
+        [RowLetterStatus.ABSENT]: 'bg-gray-600 border-gray-500',
+        [RowLetterStatus.DEFAULT]: props.defaultClass
+    }
+
+    return (
+        <div
+            className={twMerge(typeClasses[RowLetterStatus.DEFAULT], typeClasses[props.buttonStatus])}
+            onClick={() => props.handleAppendLetter(props.text)}
+        >
+            {props.text}
+        </div>
+    )
+    
+}
+
+export default KeyboardButton
