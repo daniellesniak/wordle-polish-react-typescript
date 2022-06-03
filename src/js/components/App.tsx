@@ -2,8 +2,16 @@ import React, { useState } from "react"
 import Game from "./Game"
 import { db } from "../db"
 import { importWordsToDB, prepareRecords } from "../wordsImporter"
-import nouns from "../nouns"
+// import nouns from "../nouns"
 import LoadingMessage from "./LoadingMessage"
+
+let nouns: string[] = []
+async function loadNouns() { // dynamic parcel's import
+    await import('../nouns').then(d => {
+        console.log(d.default)
+        nouns = d.default
+    })
+}
 
 const App: React.FC = () => {
     const [dbInitialized, setDbInitialized] = useState(false);
@@ -12,6 +20,7 @@ const App: React.FC = () => {
         if (await db.words.count() > 0) {
             setDbInitialized(true)
         } else {
+            await loadNouns()
             setDbInitialized(await importWordsToDB(prepareRecords(nouns)))
         }
     })()
@@ -26,7 +35,7 @@ const App: React.FC = () => {
             
             { dbInitialized 
                     ? <Game></Game>
-                    : <LoadingMessage message={'Initializing database'}></LoadingMessage>
+                    : <LoadingMessage message={'Initializing database, it may take a while'}></LoadingMessage>
             }
         </div>
     )
