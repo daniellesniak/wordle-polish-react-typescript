@@ -35,7 +35,6 @@ type State = {
     colPointer: number,
     nextRowPointer: number,
     gameState: GameState,
-    // wordToGuess: string
 }
 
 const TOASTS: Record<string, string> = {
@@ -56,7 +55,6 @@ export default class Game extends React.Component<Props, State> {
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
-            // wordToGuess: props.wordToGuess
         }
 
         this.appendLetter = this.appendLetter.bind(this)

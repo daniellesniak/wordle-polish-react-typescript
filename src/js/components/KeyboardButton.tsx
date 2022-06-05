@@ -10,13 +10,6 @@ type Props = {
 }
 
 const KeyboardButton: FC<Props> = (props: Props) => {
-    // const typeClasses = {
-    //     [RowLetterStatus.CORRECT]: 'bg-green-500 border-green-400',
-    //     [RowLetterStatus.ELSEWHERE]: 'bg-yellow-500 border-yellow-400',
-    //     [RowLetterStatus.ABSENT]: 'bg-gray-600 border-gray-500',
-    //     [RowLetterStatus.DEFAULT]: props.defaultClass
-    // }
-
     const typeClasses = keyboardButtonTypeClasses(props.defaultClass)
 
     return (

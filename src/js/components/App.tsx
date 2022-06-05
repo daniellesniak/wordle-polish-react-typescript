@@ -2,11 +2,10 @@ import React, { useState } from "react"
 import Game from "./Game"
 import { db } from "../db"
 import { importWordsToDB, prepareRecords } from "../wordsImporter"
-// import nouns from "../nouns"
 import LoadingMessage from "./LoadingMessage"
 
 let nouns: string[] = []
-async function loadNouns() { // dynamic parcel's import
+async function loadNouns() { // parcel's dynamic import
     await import('../nouns').then(d => {
         console.log(d.default)
         nouns = d.default
