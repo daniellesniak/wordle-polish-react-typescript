@@ -15,6 +15,7 @@ async function loadNouns() { // dynamic parcel's import
 
 const App: React.FC = () => {
     const [dbInitialized, setDbInitialized] = useState(false);
+    const [wordToGuess, setWordToGuess] = useState('');
 
     (async() => {
         if (await db.words.count() > 0) {
@@ -34,7 +35,7 @@ const App: React.FC = () => {
             </div>
             
             { dbInitialized 
-                    ? <Game></Game>
+                    ? <Game wordToGuess={wordToGuess} handleWordToGuessChange={setWordToGuess}></Game>
                     : <LoadingMessage message={'Initializing database, it may take a while'}></LoadingMessage>
             }
         </div>

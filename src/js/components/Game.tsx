@@ -25,14 +25,17 @@ export interface RowLetter {
     status: RowLetterStatus
 }
 
-type Props = Record<string, never>
+type Props = {
+    wordToGuess: string,
+    handleWordToGuessChange: CallableFunction
+}
 
 type State = {
     grid: RowLetter[][],
     colPointer: number,
     nextRowPointer: number,
     gameState: GameState,
-    wordToGuess: string
+    // wordToGuess: string
 }
 
 const TOASTS: Record<string, string> = {
@@ -53,7 +56,7 @@ export default class Game extends React.Component<Props, State> {
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
-            wordToGuess: ''
+            // wordToGuess: props.wordToGuess
         }
 
         this.appendLetter = this.appendLetter.bind(this)
@@ -104,21 +107,24 @@ export default class Game extends React.Component<Props, State> {
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
-            wordToGuess: ''
         })
     }
 
     render() {
         return (
             <>
-            <div className="flex flex-col">
+            <div className="flex flex-col" data-testid="grid">
                 {this.state.grid.map((rowLetters: RowLetter[], i: number) => {
-                    return <Row key={i} rowLetters={rowLetters}></Row>;
+                    return <Row key={i} index={i} rowLetters={rowLetters}></Row>;
                 })}
             </div>
 
             {this.state.gameState === GameState.IN_PROGRESS &&
-            <Keyboard handleAppendLetter={this.appendLetter} commandButtonsHandlers={this.commandButtonHandlers()} submittedRows={this.getSubmittedRows()} />}
+            <Keyboard
+                handleAppendLetter={this.appendLetter}
+                commandButtonsHandlers={this.commandButtonHandlers()}
+                submittedRows={this.getSubmittedRows()}
+            />}
 
             <ToastContainer
                 position="bottom-left"
@@ -131,7 +137,7 @@ export default class Game extends React.Component<Props, State> {
             <Replay
                 handleReplay={this.startGame} 
                 heading={{
-                        text: TOASTS[GameState.LOSE] + this.state.wordToGuess,
+                        text: TOASTS[GameState.LOSE] + this.props.wordToGuess,
                         className: "text-red-600"
                     }}
             />}
@@ -158,7 +164,7 @@ export default class Game extends React.Component<Props, State> {
     }
 
     async setRandomWordToGuess() {
-        this.setState({ wordToGuess: await this.randomWordFromDB(this.ROW_MAX_LETTERS) })
+        this.props.handleWordToGuessChange(await this.randomWordFromDB(this.ROW_MAX_LETTERS))
     }
 
     commandButtonHandlers(): Record<CMD_BTNS, CallableFunction> {
@@ -231,7 +237,7 @@ export default class Game extends React.Component<Props, State> {
         const grid = [...this.state.grid]
         const rows = grid[this.state.colPointer]
 
-        const wordToGuess = this.state.wordToGuess
+        const wordToGuess = this.props.wordToGuess
         
         grid[this.state.colPointer] = rows.map((rL: RowLetter, i: number) => {
             const rowLetterStatus = rL.letter === wordToGuess[i]
@@ -249,7 +255,7 @@ export default class Game extends React.Component<Props, State> {
     determineGameStatus(): GameState {
         const guessWord = this.getCurrentGuessLetters()
 
-        if (guessWord === this.state.wordToGuess) {
+        if (guessWord === this.props.wordToGuess) {
             return GameState.WIN
         }
 
@@ -273,6 +279,6 @@ export default class Game extends React.Component<Props, State> {
 
     lose() {
         this.setState({ gameState: GameState.LOSE })
-        toast(TOASTS[GameState.LOSE] + this.state.wordToGuess)
+        toast(TOASTS[GameState.LOSE] + this.props.wordToGuess)
     }
 }
