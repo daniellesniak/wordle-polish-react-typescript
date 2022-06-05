@@ -12,6 +12,6 @@
         "jsx": "react",
         "allowJs": true
     },
-    "include": ["src/**/*", "tests/**/*"],
+    "include": ["src/**/*", "tests/**/*", "./jest-setup.ts"],
     "exclude": ["node_modules"]
 }
