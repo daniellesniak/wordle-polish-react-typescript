@@ -5,6 +5,7 @@ import Replay from "./Replay"
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { db } from "../db";
+import Grid from "../grid"
  
 
 enum GameState {
@@ -58,7 +59,7 @@ export default class Game extends React.Component<Props, State> {
         }
 
         this.appendLetter = this.appendLetter.bind(this)
-        this.removeLetter = this.removeLetter.bind(this)
+        this.popLetter = this.popLetter.bind(this)
         this.submitAnswer = this.submitAnswer.bind(this)
         this.handleKeyboard = this.handleKeyboard.bind(this)
         this.startGame = this.startGame.bind(this)
@@ -168,35 +169,34 @@ export default class Game extends React.Component<Props, State> {
     commandButtonHandlers(): Record<CMD_BTNS, CallableFunction> {
         return {
             [CMD_BTNS.ENTER]: this.submitAnswer,
-            [CMD_BTNS.BACKSPACE]: this.removeLetter
+            [CMD_BTNS.BACKSPACE]: this.popLetter
         };
     }
 
     appendLetter(letter: string): void {
         if (this.ROW_MAX_LETTERS > this.state.nextRowPointer) {
-            const grid = [...this.state.grid]
-            grid[this.state.colPointer][this.state.nextRowPointer].letter = letter
-
-            this.setState({ grid, nextRowPointer: this.state.nextRowPointer + 1 })
+            this.setState({
+                grid: Grid.appendLetter(this.state.grid, this.state.colPointer, this.state.nextRowPointer, letter),
+                nextRowPointer: this.state.nextRowPointer + 1
+            })
         }
     }
 
-    removeLetter(): void {
+    popLetter(): void {
         if (this.state.nextRowPointer !== 0) {
-            const grid: RowLetter[][] = [...this.state.grid]
-
-            grid[this.state.colPointer][this.state.nextRowPointer - 1].letter = null
-
-            this.setState({ grid, nextRowPointer: this.state.nextRowPointer - 1 })
+            this.setState({
+                grid: Grid.removeLetter(this.state.grid, this.state.colPointer, this.state.nextRowPointer - 1),
+                nextRowPointer: this.state.nextRowPointer - 1
+            })
         }
     }
 
     async submitAnswer(): Promise<void> {
-        if (this.hasEmptyRows()) {
+        if (this.hasCurrentRowEmptyLetters()) {
             return
         }
 
-        if (! await this.isCorrectWord(this.getCurrentGuessLetters())) {
+        if (! await this.isCorrectWord(this.getCurrentRowLetters())) {
             toast(TOASTS.invalidWord)
             return
         }
@@ -205,10 +205,10 @@ export default class Game extends React.Component<Props, State> {
 
         switch(this.determineGameStatus()) {
             case GameState.WIN:
-                this.win()
+                this.doWinActions()
                 return
             case GameState.LOSE:
-                this.lose()
+                this.doLoseActions()
                 return
         }
         
@@ -219,63 +219,39 @@ export default class Game extends React.Component<Props, State> {
         return !! await db.words.where('value').equals(word).first()
     }
 
-    hasEmptyRows(): boolean {
-        const rows = [...this.state.grid][this.state.colPointer]
-
-        return rows.some((rL: RowLetter) => rL.letter === null)
+    hasCurrentRowEmptyLetters(): boolean {
+        return Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer)
     }
 
-    getCurrentGuessLetters(): string {
-        const rows = [...this.state.grid][this.state.colPointer]
-
-        return rows.map((rL: RowLetter) => rL.letter).join('')
+    getCurrentRowLetters(): string {
+        return Grid.getRowLetters(this.state.grid, this.state.colPointer)
+                .map((rowLetter: RowLetter) => rowLetter.letter)
+                .join('')
     }
 
     changeRowLettersStatuses() {
-        const grid = [...this.state.grid]
-        const rows = grid[this.state.colPointer]
-
-        const wordToGuess = this.props.wordToGuess
-        
-        grid[this.state.colPointer] = rows.map((rL: RowLetter, i: number) => {
-            const rowLetterStatus = rL.letter === wordToGuess[i]
-                ? RowLetterStatus.CORRECT
-                : wordToGuess.includes(rL.letter)
-                    ? RowLetterStatus.ELSEWHERE
-                    : RowLetterStatus.ABSENT
-
-            return {...rL, status: rowLetterStatus}
+        this.setState({
+            grid: Grid.setAppropriateRowLettersStatuses(this.state.grid, this.state.colPointer, this.props.wordToGuess)
         })
-
-        this.setState({ grid })
     }
 
     determineGameStatus(): GameState {
-        const guessWord = this.getCurrentGuessLetters()
-
-        if (guessWord === this.props.wordToGuess) {
-            return GameState.WIN
-        }
-
-        if (this.state.colPointer + 1 === this.COLS_COUNT) {
-            return GameState.LOSE
-        }
-
-        return GameState.IN_PROGRESS
+        const doesGuessMatch = this.getCurrentRowLetters() === this.props.wordToGuess
+        const hasReachedMaxCols = this.state.colPointer + 1 === this.COLS_COUNT
+        
+        return doesGuessMatch ? GameState.WIN : hasReachedMaxCols ? GameState.LOSE : GameState.IN_PROGRESS
     }
 
     getSubmittedRows(): RowLetter[][] {
-        return this.state.grid.filter((row: RowLetter[], i: number) => {
-            return this.state.colPointer > i
-        })
+        return Grid.takeRows(this.state.grid, this.state.colPointer)
     }
 
-    win() {
+    doWinActions() {
         this.setState({ gameState: GameState.WIN })
         toast(TOASTS[GameState.WIN])
     }
 
-    lose() {
+    doLoseActions() {
         this.setState({ gameState: GameState.LOSE })
         toast(TOASTS[GameState.LOSE] + this.props.wordToGuess)
     }
