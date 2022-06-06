@@ -1,49 +1,53 @@
 import { RowLetterStatus, type RowLetter } from "./components/Game"
 
 export default class Grid {
-    static appendLetter(gridState: RowLetter[][], atCol: number, atRow: number, letter: string): RowLetter[][] {
-        return this.shallow(gridState).map((rowLetters: RowLetter[], i: number) => {
-            return i === atCol ? rowLetters.map((rowLetter: RowLetter, i: number) => {
-                return i === atRow ? { ...rowLetter, letter } : rowLetter
-            }) : rowLetters
+    static appendLetter(gridState: RowLetter[][], atRow: number, atRowLetter: number, letter: string): RowLetter[][] {
+        return this.shallow(gridState).map((row: RowLetter[], rowIndex: number) => {
+            return rowIndex === atRow
+                ? row.map((rowLetter: RowLetter, rowLetterIndex: number) => {
+                    return rowLetterIndex === atRowLetter ? { ...rowLetter, letter } : rowLetter
+                  })
+                : row
         })
     }
 
-    static removeLetter(gridState: RowLetter[][], atCol: number, atRow: number): RowLetter[][] {
-        return this.shallow(gridState).map((rowLetters: RowLetter[], i: number) => {
-            return i === atCol ? rowLetters.map((rowLetter: RowLetter, i: number) => {
-                return i === atRow ? { ...rowLetter, letter: null } : rowLetter
-            }) : rowLetters
+    static removeLetter(gridState: RowLetter[][], atRow: number, atRowLetter: number): RowLetter[][] {
+        return this.shallow(gridState).map((row: RowLetter[], rowIndex: number) => {
+            return rowIndex === atRow
+                ? row.map((rowLetter: RowLetter, rowLetterIndex: number) => {
+                    return rowLetterIndex === atRowLetter ? { ...rowLetter, letter: null } : rowLetter
+                  })
+                : row
         })
     }
 
-    static hasRowEmptyLetters(gridState: RowLetter[][], atCol: number): boolean {
+    static hasRowEmptyLetters(gridState: RowLetter[][], atRow: number): boolean {
         let hasSomeEmptyLetters = true
 
-        this.shallow(gridState).forEach((rowLetters: RowLetter[], i: number) => {
-            if (i === atCol) {
-                hasSomeEmptyLetters = rowLetters.some((rowLetter: RowLetter) => rowLetter.letter === null)
+        gridState.forEach((row: RowLetter[], rowIndex: number) => {
+            if (rowIndex === atRow) {
+                hasSomeEmptyLetters = row.some((rowLetter: RowLetter) => rowLetter.letter === null)
             }
         })
 
         return hasSomeEmptyLetters
     }
 
-    static getRowLetters(gridState: RowLetter[][], atCol: number): RowLetter[] {
-        return this.shallow(gridState)[atCol]
+    static getRowLetters(gridState: RowLetter[][], atRow: number): RowLetter[] {
+        return this.shallow(gridState)[atRow]
     }
 
     static takeRows(gridState: RowLetter[][], numberOfItems: number): RowLetter[][] {
-        return gridState.filter((rowLetters: RowLetter[], i: number) => {
-            return i < numberOfItems
+        return gridState.filter((row: RowLetter[], rowIndex: number) => {
+            return rowIndex < numberOfItems
         })
     }
 
-    static setAppropriateRowLettersStatuses(gridState: RowLetter[][], atCol: number, correctWord: string): RowLetter[][] {
-        return this.shallow(gridState).map((rowLetters: RowLetter[], i: number) => {
-            if (i === atCol) {
-                return rowLetters.map((rowLetter: RowLetter, i: number) => {
-                    const status = this.isRowLetterStatusCorrect(rowLetter, correctWord[i])
+    static setAppropriateRowLettersStatuses(gridState: RowLetter[][], atRow: number, correctWord: string): RowLetter[][] {
+        return this.shallow(gridState).map((row: RowLetter[], rowIndex: number) => {
+            if (rowIndex === atRow) {
+                return row.map((rowLetter: RowLetter, rowLetterIndex: number) => {
+                    const status = this.isRowLetterStatusCorrect(rowLetter, correctWord[rowLetterIndex])
                     ? RowLetterStatus.CORRECT
                     : this.isRowLetterStatusElswhere(rowLetter, correctWord)
                         ? RowLetterStatus.ELSEWHERE
@@ -53,7 +57,7 @@ export default class Grid {
                 })
             }
 
-            return rowLetters
+            return row
         })
     }
 

@@ -6,13 +6,13 @@ type Props = {
     handleCommand: CallableFunction
 }
 
-const KeyboardCommandButton: FC<Props> = (props: Props) => {
+const KeyboardCommandKey: FC<Props> = (props: Props) => {
     return (
             <div
                 className={props.defaultClass}
                 onClick={props.handleCommand as MouseEventHandler}
-                data-testid="keyboard-button"
-                id={'keyboard-button-' + props.text.toLowerCase()}
+                data-testid="keyboard-key"
+                id={'keyboard-key-' + props.text.toLowerCase()}
             >
                 {props.text}
             </div>
@@ -20,4 +20,4 @@ const KeyboardCommandButton: FC<Props> = (props: Props) => {
     
 }
 
-export default KeyboardCommandButton
+export default KeyboardCommandKey

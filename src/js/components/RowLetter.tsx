@@ -1,13 +1,13 @@
 import React from "react"
-import { RowLetterStatus, type RowLetter } from "./Game"
+import { RowLetterStatus, type RowLetter as RowLetterType } from "./Game"
 
 type Props = {
-    rowLetter: RowLetter,
+    rowLetter: RowLetterType,
     index: number,
     rowIndex: number
 }
 
-const Letter: React.FC<Props> = (props: Props) => {
+const RowLetter: React.FC<Props> = (props: Props) => {
     const typeClasses = rowLetterTypeClasses()
 
     let className = "flex justify-center items-center m-0.5 text-4xl text-white font-bold h-16 w-16 uppercase border-2 select-none "
@@ -20,7 +20,7 @@ const Letter: React.FC<Props> = (props: Props) => {
     )
 }
 
-export default Letter
+export default RowLetter
 
 export function rowLetterTypeClasses() {
     return {

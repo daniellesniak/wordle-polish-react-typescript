@@ -1,8 +1,9 @@
 import { db, Word } from "./db"
 
-export async function importWordsToDB(records: Array<Word>): Promise<boolean> {
+export async function importDictionaryToDb(records: string[]): Promise<boolean> {
     try {
-        await db.words.bulkAdd(records)
+        const prepared = prepareRecords(records)
+        await db.words.bulkAdd(prepared)
 
         return true
     } catch (err) {
@@ -13,7 +14,7 @@ export async function importWordsToDB(records: Array<Word>): Promise<boolean> {
     return false
 }
 
-export function prepareRecords(values: Array<string>): Array<Word> {
+export function prepareRecords(values: string[]): Array<Word> {
     return values.map((v: string) => {
         return {
             value: v,

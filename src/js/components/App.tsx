@@ -1,27 +1,26 @@
 import React, { useState } from "react"
 import Game from "./Game"
 import { db } from "../db"
-import { importWordsToDB, prepareRecords } from "../wordsImporter"
+import { importDictionaryToDb } from "../wordsImporter"
 import LoadingMessage from "./LoadingMessage"
 
-let nouns: string[] = []
-async function loadNouns() { // parcel's dynamic import
-    await import('../nouns').then(d => {
-        console.log(d.default)
-        nouns = d.default
+let dictionary: string[] = []
+async function loadDictionary() { // parcel's dynamic import
+    await import('../dictionary').then(d => {
+        dictionary = d.default
     })
 }
 
 const App: React.FC = () => {
-    const [dbInitialized, setDbInitialized] = useState(false);
-    const [wordToGuess, setWordToGuess] = useState('');
+    const [isDbInitialized, setIsDbInitialized] = useState(false);
+    const [correctWord, setCorrectWord] = useState('');
 
     (async() => {
-        if (await db.words.count() > 0) {
-            setDbInitialized(true)
+        if (await db.count() > 0) {
+            setIsDbInitialized(true)
         } else {
-            await loadNouns()
-            setDbInitialized(await importWordsToDB(prepareRecords(nouns)))
+            await loadDictionary()
+            setIsDbInitialized(await importDictionaryToDb(dictionary))
         }
     })()
 
@@ -33,8 +32,8 @@ const App: React.FC = () => {
                 </div>
             </div>
             
-            { dbInitialized 
-                    ? <Game wordToGuess={wordToGuess} handleWordToGuessChange={setWordToGuess}></Game>
+            { isDbInitialized 
+                    ? <Game correctWord={correctWord} handleCorrectWordChange={setCorrectWord}></Game>
                     : <LoadingMessage message={'Initializing database, it may take a while'}></LoadingMessage>
             }
         </div>

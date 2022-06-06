@@ -16,6 +16,20 @@ export class WordleDexie extends Dexie {
             words: '++id, value, length'
         })
     }
+
+    async randomWord(length: number) {
+        const all = await this.words.where('length').equals(length).toArray()
+
+        return all[Math.floor(Math.random() * all.length)]
+    }
+
+    async exists(word: string) {
+        return !! (await this.words.where('value').equals(word).first())
+    }
+
+    async count() {
+        return await this.words.count()
+    }
 }
 
 export const db = new WordleDexie

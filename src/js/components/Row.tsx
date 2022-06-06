@@ -1,5 +1,5 @@
 import React from "react"
-import Letter from "./Letter"
+import Letter from "./RowLetter"
 import { type RowLetter } from "./Game"
 
 type Props = {

@@ -1,5 +1,5 @@
 import React from "react";
-import Keyboard, { CMD_BTNS, keyboardLayout } from "./Keyboard";
+import Keyboard, { CMD_KEYS, keyboardLayout } from "./Keyboard";
 import Row from "./Row";
 import Replay from "./Replay"
 import { ToastContainer, toast } from 'react-toastify'
@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import { db } from "../db";
 import Grid from "../grid"
  
-
 enum GameState {
     WIN,
     LOSE,
@@ -27,8 +26,8 @@ export interface RowLetter {
 }
 
 type Props = {
-    wordToGuess: string,
-    handleWordToGuessChange: CallableFunction
+    correctWord: string,
+    handleCorrectWordChange: CallableFunction
 }
 
 type State = {
@@ -40,19 +39,20 @@ type State = {
 
 const TOASTS: Record<string, string> = {
     invalidWord: '😬 Not in dictionary.',
+    rowNotComplete: '👀 Word is not complete.',
     [GameState.WIN]: '👑 You win!',
     [GameState.LOSE]: '😔 You lose, the word is '
 }
 
 export default class Game extends React.Component<Props, State> {
-    COLS_COUNT = 6
+    ROWS_COUNT = 6
     ROW_MAX_LETTERS = 5
 
     constructor(props: Props) {
         super(props)
 
         this.state = {
-            grid: this.initGrid(this.COLS_COUNT, this.ROW_MAX_LETTERS),
+            grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
@@ -66,17 +66,15 @@ export default class Game extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
-        this.setRandomWordToGuess()
-
-        document.addEventListener('keydown', this.handleKeyboard)
+        this.startGame()
     }
 
     handleKeyboard(e: KeyboardEvent): void {
-        const commandButtonHandlers = this.commandButtonHandlers()
+        const commandButtonHandlers = this.keyboardCommandKeyHandlers()
 
         if (keyboardLayout.flat().includes(e.key)){
-            if (Object.values<string>(CMD_BTNS).includes(e.key)) {
-                commandButtonHandlers[e.key as CMD_BTNS]()
+            if (Object.values<string>(CMD_KEYS).includes(e.key)) {
+                commandButtonHandlers[e.key as CMD_KEYS]()
             } else {
                 this.appendLetter(e.key)
             }
@@ -84,7 +82,7 @@ export default class Game extends React.Component<Props, State> {
     }
 
     componentWillUnmount(): void {
-        document.removeEventListener('keydown', this.handleKeyboard)
+        this.removeKeyboardEventListener()
     }
 
     initGrid(colsCount: number, rowsCount: number): RowLetter[][] {
@@ -102,11 +100,13 @@ export default class Game extends React.Component<Props, State> {
         this.setRandomWordToGuess()
 
         this.setState({
-            grid: this.initGrid(this.COLS_COUNT, this.ROW_MAX_LETTERS),
+            grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
         })
+
+        document.addEventListener('keydown', this.handleKeyboard)
     }
 
     render() {
@@ -121,7 +121,7 @@ export default class Game extends React.Component<Props, State> {
             {this.state.gameState === GameState.IN_PROGRESS &&
             <Keyboard
                 handleAppendLetter={this.appendLetter}
-                commandButtonsHandlers={this.commandButtonHandlers()}
+                commandKeysHandlers={this.keyboardCommandKeyHandlers()}
                 submittedRows={this.getSubmittedRows()}
             />}
 
@@ -136,7 +136,7 @@ export default class Game extends React.Component<Props, State> {
             <Replay
                 handleReplay={this.startGame} 
                 heading={{
-                        text: TOASTS[GameState.LOSE] + this.props.wordToGuess,
+                        text: TOASTS[GameState.LOSE] + this.props.correctWord,
                         className: "text-red-600"
                     }}
             />}
@@ -157,19 +157,17 @@ export default class Game extends React.Component<Props, State> {
     }
 
     async randomWordFromDB(length: number): Promise<string> {
-        const words = await db.words.where('length').equals(length).toArray()
-    
-        return words[Math.floor(Math.random() * words.length)].value
+        return (await db.randomWord(length)).value
     }
 
     async setRandomWordToGuess() {
-        this.props.handleWordToGuessChange(await this.randomWordFromDB(this.ROW_MAX_LETTERS))
+        this.props.handleCorrectWordChange(await this.randomWordFromDB(this.ROW_MAX_LETTERS))
     }
 
-    commandButtonHandlers(): Record<CMD_BTNS, CallableFunction> {
+    keyboardCommandKeyHandlers(): Record<CMD_KEYS, CallableFunction> {
         return {
-            [CMD_BTNS.ENTER]: this.submitAnswer,
-            [CMD_BTNS.BACKSPACE]: this.popLetter
+            [CMD_KEYS.ENTER]: this.submitAnswer,
+            [CMD_KEYS.BACKSPACE]: this.popLetter
         };
     }
 
@@ -192,11 +190,10 @@ export default class Game extends React.Component<Props, State> {
     }
 
     async submitAnswer(): Promise<void> {
-        if (this.hasCurrentRowEmptyLetters()) {
+        if (! this.isCurrentRowComplete()) {
+            toast(TOASTS.rowNotComplete)
             return
-        }
-
-        if (! await this.isCorrectWord(this.getCurrentRowLetters())) {
+        } else if (! await this.doesWordExistsInDictionary(this.getCurrentRowLetters())) {
             toast(TOASTS.invalidWord)
             return
         }
@@ -210,17 +207,21 @@ export default class Game extends React.Component<Props, State> {
             case GameState.LOSE:
                 this.doLoseActions()
                 return
+            default:
+                this.goToNextRow()
         }
-        
+    }
+
+    goToNextRow() {
         this.setState({ colPointer: this.state.colPointer + 1, nextRowPointer: 0 })
     }
 
-    async isCorrectWord(word: string): Promise<boolean> {
-        return !! await db.words.where('value').equals(word).first()
+    async doesWordExistsInDictionary(word: string): Promise<boolean> {
+        return await db.exists(word)
     }
 
-    hasCurrentRowEmptyLetters(): boolean {
-        return Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer)
+    isCurrentRowComplete(): boolean {
+        return ! Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer)
     }
 
     getCurrentRowLetters(): string {
@@ -231,13 +232,13 @@ export default class Game extends React.Component<Props, State> {
 
     changeRowLettersStatuses() {
         this.setState({
-            grid: Grid.setAppropriateRowLettersStatuses(this.state.grid, this.state.colPointer, this.props.wordToGuess)
+            grid: Grid.setAppropriateRowLettersStatuses(this.state.grid, this.state.colPointer, this.props.correctWord)
         })
     }
 
     determineGameStatus(): GameState {
-        const doesGuessMatch = this.getCurrentRowLetters() === this.props.wordToGuess
-        const hasReachedMaxCols = this.state.colPointer + 1 === this.COLS_COUNT
+        const doesGuessMatch = this.getCurrentRowLetters() === this.props.correctWord
+        const hasReachedMaxCols = this.state.colPointer + 1 === this.ROWS_COUNT
         
         return doesGuessMatch ? GameState.WIN : hasReachedMaxCols ? GameState.LOSE : GameState.IN_PROGRESS
     }
@@ -247,12 +248,18 @@ export default class Game extends React.Component<Props, State> {
     }
 
     doWinActions() {
+        this.removeKeyboardEventListener()
         this.setState({ gameState: GameState.WIN })
         toast(TOASTS[GameState.WIN])
     }
 
     doLoseActions() {
+        this.removeKeyboardEventListener()
         this.setState({ gameState: GameState.LOSE })
-        toast(TOASTS[GameState.LOSE] + this.props.wordToGuess)
+        toast(TOASTS[GameState.LOSE] + this.props.correctWord)
+    }
+
+    removeKeyboardEventListener() {
+        document.removeEventListener('keydown', this.handleKeyboard)
     }
 }
