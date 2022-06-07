@@ -6,7 +6,8 @@
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html",
     "test": "jest --config jest.config.json",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "push-gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "@types/jest": "^27.4.1",
     "dexie": "^3.2.1",
     "dexie-react-hooks": "^1.1.1",
+    "push-dir": "^0.4.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-toastify": "^8.2.0",
