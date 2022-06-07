@@ -2,6 +2,7 @@
   "name": "wordle",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://daniellesniak.github.io/wordle-polish-react-typescript/",
   "scripts": {
     "start": "parcel src/index.html",
     "prebuild-dev": "shx rm -rf dist/*",
