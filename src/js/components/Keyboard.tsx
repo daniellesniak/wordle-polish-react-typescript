@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import KeyboardKey from "./KeyboardKey"
 import KeyboardCommandButton from "./KeyboardCommandKey"
-import { RowLetterStatus, type RowLetter } from "./Game"
+import { RowCellStatus, type RowCell } from "./Game"
 
 export enum CMD_KEYS {
     ENTER = 'Enter',
@@ -26,7 +26,7 @@ export const keyboardLayout: string[][] | CMD_KEYS[][] = [
 type Props = {
     handleAppendLetter: CallableFunction,
     commandKeysHandlers: Record<CMD_KEYS, CallableFunction>,
-    submittedRows: RowLetter[][]
+    submittedRows: RowCell[][]
 }
 
 export const KEY_BTN_DEFAULT_CLASS = 'flex flex-1 p-0.5 m-0.5 justify-center items-center bg-gray-400 text-white text-xl border-2 border-gray-500 rounded-md cursor-pointer uppercase select-none'
@@ -64,10 +64,10 @@ const Keyboard: FC<Props> = (props: Props) => {
     )
 }
 
-export function getKeyboardButtonStatus(grid: RowLetter[][], letter: string): RowLetterStatus {
-    let status: RowLetterStatus = RowLetterStatus.DEFAULT
-    grid.forEach((row: RowLetter[]) => {
-        row.forEach((rL: RowLetter) => {
+export function getKeyboardButtonStatus(grid: RowCell[][], letter: string): RowCellStatus {
+    let status: RowCellStatus = RowCellStatus.DEFAULT
+    grid.forEach((row: RowCell[]) => {
+        row.forEach((rL: RowCell) => {
             if (letter === rL.letter) {
                 status = status > rL.status ? status : rL.status
             }

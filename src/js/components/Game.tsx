@@ -13,16 +13,16 @@ enum GameState {
     IN_PROGRESS
 }
 
-export enum RowLetterStatus {
+export enum RowCellStatus {
     CORRECT = 3,
     ELSEWHERE = 2,
     ABSENT = 1,
     DEFAULT = 0
 }
 
-export interface RowLetter {
+export interface RowCell {
     letter: string|null,
-    status: RowLetterStatus
+    status: RowCellStatus
 }
 
 type Props = {
@@ -31,7 +31,7 @@ type Props = {
 }
 
 type State = {
-    grid: RowLetter[][],
+    grid: RowCell[][],
     colPointer: number,
     nextRowPointer: number,
     gameState: GameState,
@@ -85,12 +85,12 @@ export default class Game extends React.Component<Props, State> {
         this.removeKeyboardEventListener()
     }
 
-    initGrid(colsCount: number, rowsCount: number): RowLetter[][] {
+    initGrid(colsCount: number, rowsCount: number): RowCell[][] {
         return Array(colsCount).fill(0).map(() => {
             return Array(rowsCount).fill(0).map(() => {
                 return {
                     letter: null,
-                    status: RowLetterStatus.DEFAULT
+                    status: RowCellStatus.DEFAULT
                 }
             })
         })
@@ -113,8 +113,8 @@ export default class Game extends React.Component<Props, State> {
         return (
             <>
             <div className="flex flex-col" data-testid="grid">
-                {this.state.grid.map((rowLetters: RowLetter[], i: number) => {
-                    return <Row key={i} index={i} rowLetters={rowLetters}></Row>;
+                {this.state.grid.map((rowCells: RowCell[], i: number) => {
+                    return <Row key={i} index={i} rowCells={rowCells}></Row>;
                 })}
             </div>
 
@@ -193,12 +193,12 @@ export default class Game extends React.Component<Props, State> {
         if (! this.isCurrentRowComplete()) {
             toast(TOASTS.rowNotComplete)
             return
-        } else if (! await this.doesWordExistsInDictionary(this.getCurrentRowLetters())) {
+        } else if (! await this.doesWordExistsInDictionary(this.getCurrentRowCells())) {
             toast(TOASTS.invalidWord)
             return
         }
 
-        this.changeRowLettersStatuses()
+        this.changeRowCellsStatuses()
 
         switch(this.determineGameStatus()) {
             case GameState.WIN:
@@ -224,26 +224,26 @@ export default class Game extends React.Component<Props, State> {
         return ! Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer)
     }
 
-    getCurrentRowLetters(): string {
-        return Grid.getRowLetters(this.state.grid, this.state.colPointer)
-                .map((rowLetter: RowLetter) => rowLetter.letter)
+    getCurrentRowCells(): string {
+        return Grid.getRowCells(this.state.grid, this.state.colPointer)
+                .map((rowCell: RowCell) => rowCell.letter)
                 .join('')
     }
 
-    changeRowLettersStatuses() {
+    changeRowCellsStatuses() {
         this.setState({
-            grid: Grid.setAppropriateRowLettersStatuses(this.state.grid, this.state.colPointer, this.props.correctWord)
+            grid: Grid.setAppropriateRowCellsStatuses(this.state.grid, this.state.colPointer, this.props.correctWord)
         })
     }
 
     determineGameStatus(): GameState {
-        const doesGuessMatch = this.getCurrentRowLetters() === this.props.correctWord
+        const doesGuessMatch = this.getCurrentRowCells() === this.props.correctWord
         const hasReachedMaxCols = this.state.colPointer + 1 === this.ROWS_COUNT
         
         return doesGuessMatch ? GameState.WIN : hasReachedMaxCols ? GameState.LOSE : GameState.IN_PROGRESS
     }
 
-    getSubmittedRows(): RowLetter[][] {
+    getSubmittedRows(): RowCell[][] {
         return Grid.takeRows(this.state.grid, this.state.colPointer)
     }
 

@@ -1,18 +1,18 @@
 import React from "react"
-import Letter from "./RowLetter"
-import { type RowLetter } from "./Game"
+import Letter from "./RowCell"
+import { type RowCell } from "./Game"
 
 type Props = {
-    rowLetters: Array<RowLetter>,
+    rowCells: Array<RowCell>,
     index: number
 }
 
 const Row: React.FC<Props> = (props: Props) => {
     return (
         <div className="flex justify-center" data-testid={'row-' + (props.index + 1)}>
-            {props.rowLetters.map((rowLetter: RowLetter, i: number) => {
+            {props.rowCells.map((rowCell: RowCell, i: number) => {
                 return (
-                    <Letter key={i} rowLetter={rowLetter} index={i} rowIndex={props.index}></Letter>
+                    <Letter key={i} rowCell={rowCell} index={i} rowIndex={props.index}></Letter>
                 )
             })}
         </div>

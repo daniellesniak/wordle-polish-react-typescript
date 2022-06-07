@@ -1,12 +1,12 @@
 import React, { FC } from "react"
-import { RowLetterStatus } from "./Game"
+import { RowCellStatus } from "./Game"
 import { twMerge } from "tailwind-merge"
 
 type Props = {
     text: string,
     defaultClass: string,
     handleAppendLetter: CallableFunction,
-    keyStatus: RowLetterStatus
+    keyStatus: RowCellStatus
 }
 
 const KeyboardKey: FC<Props> = (props: Props) => {
@@ -14,7 +14,7 @@ const KeyboardKey: FC<Props> = (props: Props) => {
 
     return (
         <div
-            className={twMerge(typeClasses[RowLetterStatus.DEFAULT], typeClasses[props.keyStatus])}
+            className={twMerge(typeClasses[RowCellStatus.DEFAULT], typeClasses[props.keyStatus])}
             onClick={() => props.handleAppendLetter(props.text)}
             id={'keyboard-key-' + props.text.toLowerCase()}
             data-testid="keyboard-key"
@@ -27,10 +27,10 @@ const KeyboardKey: FC<Props> = (props: Props) => {
 
 export function keyboardKeyTypeClasses(defaultClass: string) {
     return {
-        [RowLetterStatus.CORRECT]: 'bg-green-500 border-green-400',
-        [RowLetterStatus.ELSEWHERE]: 'bg-yellow-500 border-yellow-400',
-        [RowLetterStatus.ABSENT]: 'bg-gray-600 border-gray-500',
-        [RowLetterStatus.DEFAULT]: defaultClass
+        [RowCellStatus.CORRECT]: 'bg-green-500 border-green-400',
+        [RowCellStatus.ELSEWHERE]: 'bg-yellow-500 border-yellow-400',
+        [RowCellStatus.ABSENT]: 'bg-gray-600 border-gray-500',
+        [RowCellStatus.DEFAULT]: defaultClass
     }
 }
 

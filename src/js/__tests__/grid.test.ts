@@ -1,4 +1,4 @@
-import { RowLetter, RowLetterStatus } from "../components/Game"
+import { RowCell, RowCellStatus } from "../components/Game"
 import Grid from "../grid"
 
 const COLS_COUNT = 6
@@ -6,13 +6,13 @@ const ROWS_COUNT = 5
 
 describe('Grid static class', () => {
     test('appends letter', () => {
-        const grid: RowLetter[][] = Grid.appendLetter(initEmptyGrid(COLS_COUNT, ROWS_COUNT), 0, 0, 'm')
+        const grid: RowCell[][] = Grid.appendLetter(initEmptyGrid(COLS_COUNT, ROWS_COUNT), 0, 0, 'm')
 
         expect(grid[0][0].letter).toBe('m')
     })
 
     test('checks if has empty letters', () => {
-        let withoutOne: RowLetter[][] = initEmptyGrid(COLS_COUNT, ROWS_COUNT)
+        let withoutOne: RowCell[][] = initEmptyGrid(COLS_COUNT, ROWS_COUNT)
         withoutOne = Grid.appendLetter(withoutOne, 0, 0, 'm') 
         withoutOne = Grid.appendLetter(withoutOne, 0, 1, 'o') 
         withoutOne = Grid.appendLetter(withoutOne, 0, 2, 'r') 
@@ -25,7 +25,7 @@ describe('Grid static class', () => {
         expect(Grid.hasRowEmptyLetters(withAll, 0)).toBeFalsy()
     })
 
-    test('gets rowLetters at index', () => {
+    test('gets rowCells at index', () => {
         let grid = initEmptyGrid(COLS_COUNT, ROWS_COUNT);
 
 
@@ -33,63 +33,63 @@ describe('Grid static class', () => {
             grid = Grid.appendLetter(grid, 0, i, letter)
         });
 
-        expect(Grid.getRowLetters(grid, 0)).toMatchObject([
+        expect(Grid.getRowCells(grid, 0)).toMatchObject([
             {
                 letter: "m",
-                status: RowLetterStatus.DEFAULT
+                status: RowCellStatus.DEFAULT
             },
             {
                 letter: "o",
-                status: RowLetterStatus.DEFAULT
+                status: RowCellStatus.DEFAULT
             },
             {
                 letter: "r",
-                status: RowLetterStatus.DEFAULT
+                status: RowCellStatus.DEFAULT
             },
             {
                 letter: "z",
-                status: RowLetterStatus.DEFAULT
+                status: RowCellStatus.DEFAULT
             },
             {
                 letter: "e",
-                status: RowLetterStatus.DEFAULT
+                status: RowCellStatus.DEFAULT
             }
         ])
     })
 
-    test('sets an appropriate rowLetters statuses', () => {
-        let grid: RowLetter[][] = initEmptyGrid(COLS_COUNT, ROWS_COUNT)
+    test('sets an appropriate rowCells statuses', () => {
+        let grid: RowCell[][] = initEmptyGrid(COLS_COUNT, ROWS_COUNT)
         
         Array.from("mozry").forEach((letter: string, i: number) => {
             grid = Grid.appendLetter(grid, 0, i, letter)
         });
 
-        expect(Grid.setAppropriateRowLettersStatuses(grid, 0, "morze")[0]).toMatchObject([
+        expect(Grid.setAppropriateRowCellsStatuses(grid, 0, "morze")[0]).toMatchObject([
             {
                 letter: 'm',
-                status: RowLetterStatus.CORRECT
+                status: RowCellStatus.CORRECT
             },
             {
                 letter: 'o',
-                status: RowLetterStatus.CORRECT
+                status: RowCellStatus.CORRECT
             },
             {
                 letter: 'z',
-                status: RowLetterStatus.ELSEWHERE
+                status: RowCellStatus.ELSEWHERE
             },
             {
                 letter: 'r',
-                status: RowLetterStatus.ELSEWHERE
+                status: RowCellStatus.ELSEWHERE
             },
             {
                 letter: 'y',
-                status: RowLetterStatus.ABSENT
+                status: RowCellStatus.ABSENT
             }
         ])
     })
 
     test('takes 2 first rows', () => {
-        let grid: RowLetter[][] = initEmptyGrid(COLS_COUNT, ROWS_COUNT)
+        let grid: RowCell[][] = initEmptyGrid(COLS_COUNT, ROWS_COUNT)
         
         Array.from("morze").forEach((letter: string, i: number) => {
             grid = Grid.appendLetter(grid, 0, i, letter)
@@ -116,7 +116,7 @@ function initEmptyGrid(colsCount: number, rowsCount: number){
         return Array(rowsCount).fill(0).map(() => {
             return {
                 letter: null,
-                status: RowLetterStatus.DEFAULT
+                status: RowCellStatus.DEFAULT
             }
         })
     })

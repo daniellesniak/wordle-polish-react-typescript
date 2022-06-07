@@ -1,59 +1,59 @@
-import { RowLetterStatus, type RowLetter } from "./components/Game"
+import { RowCellStatus, type RowCell } from "./components/Game"
 
 export default class Grid {
-    static appendLetter(gridState: RowLetter[][], atRow: number, atRowLetter: number, letter: string): RowLetter[][] {
-        return this.shallow(gridState).map((row: RowLetter[], rowIndex: number) => {
+    static appendLetter(gridState: RowCell[][], atRow: number, atRowCell: number, letter: string): RowCell[][] {
+        return this.shallow(gridState).map((row: RowCell[], rowIndex: number) => {
             return rowIndex === atRow
-                ? row.map((rowLetter: RowLetter, rowLetterIndex: number) => {
-                    return rowLetterIndex === atRowLetter ? { ...rowLetter, letter } : rowLetter
+                ? row.map((rowCell: RowCell, rowCellIndex: number) => {
+                    return rowCellIndex === atRowCell ? { ...rowCell, letter } : rowCell
                   })
                 : row
         })
     }
 
-    static removeLetter(gridState: RowLetter[][], atRow: number, atRowLetter: number): RowLetter[][] {
-        return this.shallow(gridState).map((row: RowLetter[], rowIndex: number) => {
+    static removeLetter(gridState: RowCell[][], atRow: number, atRowCell: number): RowCell[][] {
+        return this.shallow(gridState).map((row: RowCell[], rowIndex: number) => {
             return rowIndex === atRow
-                ? row.map((rowLetter: RowLetter, rowLetterIndex: number) => {
-                    return rowLetterIndex === atRowLetter ? { ...rowLetter, letter: null } : rowLetter
+                ? row.map((rowCell: RowCell, rowCellIndex: number) => {
+                    return rowCellIndex === atRowCell ? { ...rowCell, letter: null } : rowCell
                   })
                 : row
         })
     }
 
-    static hasRowEmptyLetters(gridState: RowLetter[][], atRow: number): boolean {
+    static hasRowEmptyLetters(gridState: RowCell[][], atRow: number): boolean {
         let hasSomeEmptyLetters = true
 
-        gridState.forEach((row: RowLetter[], rowIndex: number) => {
+        gridState.forEach((row: RowCell[], rowIndex: number) => {
             if (rowIndex === atRow) {
-                hasSomeEmptyLetters = row.some((rowLetter: RowLetter) => rowLetter.letter === null)
+                hasSomeEmptyLetters = row.some((rowCell: RowCell) => rowCell.letter === null)
             }
         })
 
         return hasSomeEmptyLetters
     }
 
-    static getRowLetters(gridState: RowLetter[][], atRow: number): RowLetter[] {
+    static getRowCells(gridState: RowCell[][], atRow: number): RowCell[] {
         return this.shallow(gridState)[atRow]
     }
 
-    static takeRows(gridState: RowLetter[][], numberOfItems: number): RowLetter[][] {
-        return gridState.filter((row: RowLetter[], rowIndex: number) => {
+    static takeRows(gridState: RowCell[][], numberOfItems: number): RowCell[][] {
+        return gridState.filter((row: RowCell[], rowIndex: number) => {
             return rowIndex < numberOfItems
         })
     }
 
-    static setAppropriateRowLettersStatuses(gridState: RowLetter[][], atRow: number, correctWord: string): RowLetter[][] {
-        return this.shallow(gridState).map((row: RowLetter[], rowIndex: number) => {
+    static setAppropriateRowCellsStatuses(gridState: RowCell[][], atRow: number, correctWord: string): RowCell[][] {
+        return this.shallow(gridState).map((row: RowCell[], rowIndex: number) => {
             if (rowIndex === atRow) {
-                return row.map((rowLetter: RowLetter, rowLetterIndex: number) => {
-                    const status = this.isRowLetterStatusCorrect(rowLetter, correctWord[rowLetterIndex])
-                    ? RowLetterStatus.CORRECT
-                    : this.isRowLetterStatusElswhere(rowLetter, correctWord)
-                        ? RowLetterStatus.ELSEWHERE
-                        : RowLetterStatus.ABSENT
+                return row.map((rowCell: RowCell, rowCellIndex: number) => {
+                    const status = this.isRowCellStatusCorrect(rowCell, correctWord[rowCellIndex])
+                    ? RowCellStatus.CORRECT
+                    : this.isRowCellStatusElswhere(rowCell, correctWord)
+                        ? RowCellStatus.ELSEWHERE
+                        : RowCellStatus.ABSENT
     
-                    return { ...rowLetter, status }
+                    return { ...rowCell, status }
                 })
             }
 
@@ -61,15 +61,15 @@ export default class Grid {
         })
     }
 
-    static isRowLetterStatusCorrect(rowLetter: RowLetter, letter: string): boolean {
-        return rowLetter.letter === letter
+    static isRowCellStatusCorrect(rowCell: RowCell, letter: string): boolean {
+        return rowCell.letter === letter
     }
     
-    static isRowLetterStatusElswhere(rowLetter: RowLetter, correctWord: string): boolean {
-        return correctWord.includes(rowLetter.letter)
+    static isRowCellStatusElswhere(rowCell: RowCell, correctWord: string): boolean {
+        return correctWord.includes(rowCell.letter)
     }
 
-    static shallow(gridState: RowLetter[][]) {
+    static shallow(gridState: RowCell[][]) {
         return [...gridState]
     }
 }
