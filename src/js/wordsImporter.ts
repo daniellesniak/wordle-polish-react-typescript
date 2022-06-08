@@ -15,10 +15,10 @@ export async function importDictionaryToDb(records: string[]): Promise<boolean> 
 }
 
 export function prepareRecords(values: string[]): Word[] {
-    return values.map((v: string) => {
+    return values.map((word: string) => {
         return {
-            value: v,
-            length: v.length
+            value: word,
+            length: word.length
         }
     })
 }
