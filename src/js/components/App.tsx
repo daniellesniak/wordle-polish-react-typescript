@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import Game from "./Game"
 import { db } from "../db"
-import { importDictionaryToDb } from "../wordsImporter"
+import { importWordsToDb } from "../wordsImporter"
 import LoadingMessage from "./LoadingMessage"
 
 let dictionary: string[] = []
@@ -20,7 +20,7 @@ const App: React.FC = () => {
             setIsDbInitialized(true)
         } else {
             await loadDictionary()
-            setIsDbInitialized(await importDictionaryToDb(dictionary))
+            setIsDbInitialized(await importWordsToDb(dictionary))
         }
     })()
 

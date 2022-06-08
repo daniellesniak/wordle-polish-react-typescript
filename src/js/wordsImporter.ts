@@ -1,6 +1,6 @@
 import { db, Word } from "./db"
 
-export async function importDictionaryToDb(records: string[]): Promise<boolean> {
+export async function importWordsToDb(records: string[]): Promise<boolean> {
     try {
         const prepared = prepareRecords(records)
         await db.words.bulkAdd(prepared)
