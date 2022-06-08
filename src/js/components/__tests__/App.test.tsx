@@ -55,7 +55,6 @@ db.words.bulkAdd(dictionary);
 describe('loads and display', () => {
     test('loads and display grid', async () => {
         render(<Game correctWord="doesntmatter" handleCorrectWordChange={(): null => null} />)
-        console.log('Dictionary: ', await db.words.toArray())
     
         expect(await screen.findByTestId('grid')).toBeInTheDocument()
     });
