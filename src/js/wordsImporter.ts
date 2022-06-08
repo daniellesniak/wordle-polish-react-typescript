@@ -14,7 +14,7 @@ export async function importDictionaryToDb(records: string[]): Promise<boolean> 
     return false
 }
 
-export function prepareRecords(values: string[]): Array<Word> {
+export function prepareRecords(values: string[]): Word[] {
     return values.map((v: string) => {
         return {
             value: v,
