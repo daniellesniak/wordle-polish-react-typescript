@@ -17,6 +17,10 @@ export class WordleDexie extends Dexie {
         })
     }
 
+    async all() {
+        return await this.words.toArray()
+    }
+
     async randomWord(length: number) {
         const all = await this.words.where('length').equals(length).toArray()
 
