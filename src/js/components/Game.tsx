@@ -1,11 +1,11 @@
 import React from "react";
 import Keyboard, { CMD_KEYS, keyboardLayout } from "./Keyboard";
 import Row from "./Row";
-import Replay from "./Replay"
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import Replay from "./Replay";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { db } from "../db";
-import Grid from "../grid"
+import Grid from "../grid";
  
 enum GameState {
     WIN,
@@ -41,48 +41,48 @@ const TOASTS: Record<string, string> = {
     invalidWord: '😬 Not in dictionary.',
     rowNotComplete: '👀 Word is not complete.',
     [GameState.WIN]: '👑 You win!',
-    [GameState.LOSE]: '😔 You lose, the word is '
-}
+    [GameState.LOSE]: '😔 You lose, the word is ',
+};
 
 export default class Game extends React.Component<Props, State> {
-    ROWS_COUNT = 6
-    ROW_MAX_LETTERS = 5
+    ROWS_COUNT = 6;
+    ROW_MAX_LETTERS = 5;
 
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
-        }
+        };
 
-        this.appendLetter = this.appendLetter.bind(this)
-        this.popLetter = this.popLetter.bind(this)
-        this.submitAnswer = this.submitAnswer.bind(this)
-        this.handleKeyboard = this.handleKeyboard.bind(this)
-        this.startGame = this.startGame.bind(this)
+        this.appendLetter = this.appendLetter.bind(this);
+        this.popLetter = this.popLetter.bind(this);
+        this.submitAnswer = this.submitAnswer.bind(this);
+        this.handleKeyboard = this.handleKeyboard.bind(this);
+        this.startGame = this.startGame.bind(this);
     }
 
     componentDidMount(): void {
-        this.startGame()
+        this.startGame();
     }
 
     handleKeyboard(e: KeyboardEvent): void {
-        const commandButtonHandlers = this.keyboardCommandKeyHandlers()
+        const commandButtonHandlers = this.keyboardCommandKeyHandlers();
 
         if (keyboardLayout.flat().includes(e.key)){
             if (Object.values<string>(CMD_KEYS).includes(e.key)) {
-                commandButtonHandlers[e.key as CMD_KEYS]()
+                commandButtonHandlers[e.key as CMD_KEYS]();
             } else {
-                this.appendLetter(e.key)
+                this.appendLetter(e.key);
             }
         }
     }
 
     componentWillUnmount(): void {
-        this.removeKeyboardEventListener()
+        this.removeKeyboardEventListener();
     }
 
     initGrid(colsCount: number, rowsCount: number): RowCell[][] {
@@ -90,23 +90,23 @@ export default class Game extends React.Component<Props, State> {
             return Array(rowsCount).fill(0).map(() => {
                 return {
                     letter: null,
-                    status: RowCellStatus.DEFAULT
-                }
-            })
-        })
+                    status: RowCellStatus.DEFAULT,
+                };
+            });
+        });
     }
 
     startGame() {
-        this.setRandomWordToGuess()
+        this.setRandomWordToGuess();
 
         this.setState({
             grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
-        })
+        });
 
-        document.addEventListener('keydown', this.handleKeyboard)
+        document.addEventListener('keydown', this.handleKeyboard);
     }
 
     render() {
@@ -137,7 +137,7 @@ export default class Game extends React.Component<Props, State> {
                 handleReplay={this.startGame} 
                 heading={{
                         text: TOASTS[GameState.LOSE] + this.props.correctWord,
-                        className: "text-red-600"
+                        className: "text-red-600",
                     }}
             />}
 
@@ -146,28 +146,28 @@ export default class Game extends React.Component<Props, State> {
                 handleReplay={this.startGame} 
                 heading={{
                         text: TOASTS[GameState.WIN],
-                        className: "text-green-600"
+                        className: "text-green-600",
                     }}
                 button={{
-                    className: "bg-green-500 hover:bg-green-600 focus:bg-green-700"
+                    className: "bg-green-500 hover:bg-green-600 focus:bg-green-700",
                 }}
             />}
             </>
-        )
+        );
     }
 
     async randomWordFromDB(length: number): Promise<string> {
-        return (await db.randomWord(length)).value
+        return (await db.randomWord(length)).value;
     }
 
     async setRandomWordToGuess() {
-        this.props.handleCorrectWordChange(await this.randomWordFromDB(this.ROW_MAX_LETTERS))
+        this.props.handleCorrectWordChange(await this.randomWordFromDB(this.ROW_MAX_LETTERS));
     }
 
     keyboardCommandKeyHandlers(): Record<CMD_KEYS, CallableFunction> {
         return {
             [CMD_KEYS.ENTER]: this.submitAnswer,
-            [CMD_KEYS.BACKSPACE]: this.popLetter
+            [CMD_KEYS.BACKSPACE]: this.popLetter,
         };
     }
 
@@ -175,8 +175,8 @@ export default class Game extends React.Component<Props, State> {
         if (this.ROW_MAX_LETTERS > this.state.nextRowPointer) {
             this.setState({
                 grid: Grid.appendLetter(this.state.grid, this.state.colPointer, this.state.nextRowPointer, letter),
-                nextRowPointer: this.state.nextRowPointer + 1
-            })
+                nextRowPointer: this.state.nextRowPointer + 1,
+            });
         }
     }
 
@@ -184,82 +184,82 @@ export default class Game extends React.Component<Props, State> {
         if (this.state.nextRowPointer !== 0) {
             this.setState({
                 grid: Grid.removeLetter(this.state.grid, this.state.colPointer, this.state.nextRowPointer - 1),
-                nextRowPointer: this.state.nextRowPointer - 1
-            })
+                nextRowPointer: this.state.nextRowPointer - 1,
+            });
         }
     }
 
     async submitAnswer(): Promise<void> {
         if (! this.isCurrentRowComplete()) {
-            toast(TOASTS.rowNotComplete)
-            return
+            toast(TOASTS.rowNotComplete);
+            return;
         } else if (! await this.doesWordExistsInDictionary(this.getCurrentRowCells())) {
-            toast(TOASTS.invalidWord)
-            return
+            toast(TOASTS.invalidWord);
+            return;
         }
 
-        this.changeRowCellsStatuses()
+        this.changeRowCellsStatuses();
 
         switch(this.determineGameStatus()) {
             case GameState.WIN:
-                this.doWinActions()
-                return
+                this.doWinActions();
+                return;
             case GameState.LOSE:
-                this.doLoseActions()
-                return
+                this.doLoseActions();
+                return;
             default:
-                this.goToNextRow()
+                this.goToNextRow();
         }
     }
 
     goToNextRow() {
-        this.setState({ colPointer: this.state.colPointer + 1, nextRowPointer: 0 })
+        this.setState({ colPointer: this.state.colPointer + 1, nextRowPointer: 0 });
     }
 
     async doesWordExistsInDictionary(word: string): Promise<boolean> {
-        return await db.exists(word)
+        return await db.exists(word);
     }
 
     isCurrentRowComplete(): boolean {
-        return ! Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer)
+        return ! Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer);
     }
 
     getCurrentRowCells(): string {
         return Grid.getRowCells(this.state.grid, this.state.colPointer)
                 .map((rowCell: RowCell) => rowCell.letter)
-                .join('')
+                .join('');
     }
 
     changeRowCellsStatuses() {
         this.setState({
-            grid: Grid.setAppropriateRowCellsStatuses(this.state.grid, this.state.colPointer, this.props.correctWord)
-        })
+            grid: Grid.setAppropriateRowCellsStatuses(this.state.grid, this.state.colPointer, this.props.correctWord),
+        });
     }
 
     determineGameStatus(): GameState {
-        const doesGuessMatch = this.getCurrentRowCells() === this.props.correctWord
-        const hasReachedMaxCols = this.state.colPointer + 1 === this.ROWS_COUNT
+        const doesGuessMatch = this.getCurrentRowCells() === this.props.correctWord;
+        const hasReachedMaxCols = this.state.colPointer + 1 === this.ROWS_COUNT;
         
-        return doesGuessMatch ? GameState.WIN : hasReachedMaxCols ? GameState.LOSE : GameState.IN_PROGRESS
+        return doesGuessMatch ? GameState.WIN : hasReachedMaxCols ? GameState.LOSE : GameState.IN_PROGRESS;
     }
 
     getSubmittedRows(): RowCell[][] {
-        return Grid.takeRows(this.state.grid, this.state.colPointer)
+        return Grid.takeRows(this.state.grid, this.state.colPointer);
     }
 
     doWinActions() {
-        this.removeKeyboardEventListener()
-        this.setState({ gameState: GameState.WIN })
-        toast(TOASTS[GameState.WIN])
+        this.removeKeyboardEventListener();
+        this.setState({ gameState: GameState.WIN });
+        toast(TOASTS[GameState.WIN]);
     }
 
     doLoseActions() {
-        this.removeKeyboardEventListener()
-        this.setState({ gameState: GameState.LOSE })
-        toast(TOASTS[GameState.LOSE] + this.props.correctWord)
+        this.removeKeyboardEventListener();
+        this.setState({ gameState: GameState.LOSE });
+        toast(TOASTS[GameState.LOSE] + this.props.correctWord);
     }
 
     removeKeyboardEventListener() {
-        document.removeEventListener('keydown', this.handleKeyboard)
+        document.removeEventListener('keydown', this.handleKeyboard);
     }
 }

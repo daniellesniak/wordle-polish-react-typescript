@@ -1,6 +1,6 @@
-import React, { FC } from "react"
-import { RowCellStatus } from "./Game"
-import { twMerge } from "tailwind-merge"
+import React, { FC } from "react";
+import { RowCellStatus } from "./Game";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
     text: string,
@@ -10,7 +10,7 @@ type Props = {
 }
 
 const KeyboardKey: FC<Props> = (props: Props) => {
-    const typeClasses = keyboardKeyTypeClasses(props.defaultClass)
+    const typeClasses = keyboardKeyTypeClasses(props.defaultClass);
 
     return (
         <div
@@ -21,17 +21,17 @@ const KeyboardKey: FC<Props> = (props: Props) => {
         >
             {props.text}
         </div>
-    )
+    );
     
-}
+};
 
 export function keyboardKeyTypeClasses(defaultClass: string) {
     return {
         [RowCellStatus.CORRECT]: 'bg-green-500 border-green-400',
         [RowCellStatus.ELSEWHERE]: 'bg-yellow-500 border-yellow-400',
         [RowCellStatus.ABSENT]: 'bg-gray-600 border-gray-500',
-        [RowCellStatus.DEFAULT]: defaultClass
-    }
+        [RowCellStatus.DEFAULT]: defaultClass,
+    };
 }
 
-export default KeyboardKey
+export default KeyboardKey;

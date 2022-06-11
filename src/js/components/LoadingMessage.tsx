@@ -7,36 +7,36 @@ interface Props {
 }
 
 const LoadingMessage: FC<Props> = (props: Props) => {
-    const dots = useEllipsis(props.ellipsisSign)
+    const dots = useEllipsis(props.ellipsisSign);
 
     return (
         <div className="flex justify-center items-center py-3 text-white text-xl">
             {props.message + (props.withEllipsis ? dots : '')}
         </div>
-    )
-}
+    );
+};
 
 function useEllipsis(ellipsisSign: string, maxLength = 3) {
-    const [ellipsis, setEllipsis] = useState(ellipsisSign)
+    const [ellipsis, setEllipsis] = useState(ellipsisSign);
 
     useEffect(() => {
         const ellipsisTimer = setTimeout(() => {
             if (ellipsis.length === maxLength) {
-                setEllipsis(ellipsisSign)
+                setEllipsis(ellipsisSign);
             } else {
-                setEllipsis(ellipsis + ellipsisSign)
+                setEllipsis(ellipsis + ellipsisSign);
             }
-        }, 1000)
+        }, 1000);
 
-        return () => clearTimeout(ellipsisTimer)
-    }, [ellipsis, ellipsisSign, maxLength])
+        return () => clearTimeout(ellipsisTimer);
+    }, [ellipsis, ellipsisSign, maxLength]);
 
-    return ellipsis
+    return ellipsis;
 }
 
 LoadingMessage.defaultProps = {
     withEllipsis: true,
-    ellipsisSign: '.'
-}
+    ellipsisSign: '.',
+};
 
-export default LoadingMessage
+export default LoadingMessage;

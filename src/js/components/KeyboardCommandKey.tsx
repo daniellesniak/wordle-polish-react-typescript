@@ -1,4 +1,4 @@
-import React, { FC, MouseEventHandler } from "react"
+import React, { FC, MouseEventHandler } from "react";
 
 type Props = {
     text: string,
@@ -16,8 +16,8 @@ const KeyboardCommandKey: FC<Props> = (props: Props) => {
             >
                 {props.text}
             </div>
-    )
+    );
     
-}
+};
 
-export default KeyboardCommandKey
+export default KeyboardCommandKey;

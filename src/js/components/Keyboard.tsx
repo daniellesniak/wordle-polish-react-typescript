@@ -1,7 +1,7 @@
-import React, { FC } from "react"
-import KeyboardKey from "./KeyboardKey"
-import KeyboardCommandButton from "./KeyboardCommandKey"
-import { RowCellStatus, type RowCell } from "./Game"
+import React, { FC } from "react";
+import KeyboardKey from "./KeyboardKey";
+import KeyboardCommandButton from "./KeyboardCommandKey";
+import { RowCellStatus, type RowCell } from "./Game";
 
 export enum CMD_KEYS {
     ENTER = 'Enter',
@@ -10,18 +10,18 @@ export enum CMD_KEYS {
 
 export const keyboardLayout: string[][] | CMD_KEYS[][] = [
     [
-        'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż'
+        'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż',
     ],
     [
-        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
     ],
     [
-        'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'
+        'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
     ],
     [
-        CMD_KEYS.ENTER, 'z', 'x', 'c', 'v', 'b', 'n', 'm', CMD_KEYS.BACKSPACE
-    ]
-]
+        CMD_KEYS.ENTER, 'z', 'x', 'c', 'v', 'b', 'n', 'm', CMD_KEYS.BACKSPACE,
+    ],
+];
 
 type Props = {
     handleAppendLetter: CallableFunction,
@@ -29,7 +29,7 @@ type Props = {
     submittedRows: RowCell[][]
 }
 
-export const KEY_BTN_DEFAULT_CLASS = 'flex flex-1 p-0.5 m-0.5 justify-center items-center bg-gray-400 text-white text-xl border-2 border-gray-500 rounded-md cursor-pointer uppercase select-none'
+export const KEY_BTN_DEFAULT_CLASS = 'flex flex-1 p-0.5 m-0.5 justify-center items-center bg-gray-400 text-white text-xl border-2 border-gray-500 rounded-md cursor-pointer uppercase select-none';
 
 const Keyboard: FC<Props> = (props: Props) => {
     const layout = keyboardLayout.map((row: string[] | CMD_KEYS[], i: number) => {
@@ -54,27 +54,27 @@ const Keyboard: FC<Props> = (props: Props) => {
                     )
                 }
             </div>
-        )
-    })
+        );
+    });
 
     return (
         <div className="flex flex-col mt-3" data-testid="keyboard">
             {layout}
         </div>
-    )
-}
+    );
+};
 
 export function getKeyboardButtonStatus(grid: RowCell[][], letter: string): RowCellStatus {
-    let status: RowCellStatus = RowCellStatus.DEFAULT
+    let status: RowCellStatus = RowCellStatus.DEFAULT;
     grid.forEach((row: RowCell[]) => {
         row.forEach((rL: RowCell) => {
             if (letter === rL.letter) {
-                status = status > rL.status ? status : rL.status
+                status = status > rL.status ? status : rL.status;
             }
-        })
-    })
+        });
+    });
 
-    return status
+    return status;
 }
 
-export default Keyboard
+export default Keyboard;

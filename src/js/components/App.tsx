@@ -1,14 +1,14 @@
-import React, { useState } from "react"
-import Game from "./Game"
-import { db } from "../db"
-import { importWordsToDb } from "../wordsImporter"
-import LoadingMessage from "./LoadingMessage"
+import React, { useState } from "react";
+import Game from "./Game";
+import { db } from "../db";
+import { importWordsToDb } from "../wordsImporter";
+import LoadingMessage from "./LoadingMessage";
 
-let dictionary: string[] = []
+let dictionary: string[] = [];
 async function loadDictionary() { // parcel's dynamic import
     await import('../dictionary').then(d => {
-        dictionary = d.default
-    })
+        dictionary = d.default;
+    });
 }
 
 const App: React.FC = () => {
@@ -17,12 +17,12 @@ const App: React.FC = () => {
 
     (async() => {
         if (await db.count() > 0) {
-            setIsDbInitialized(true)
+            setIsDbInitialized(true);
         } else {
-            await loadDictionary()
-            setIsDbInitialized(await importWordsToDb(dictionary))
+            await loadDictionary();
+            setIsDbInitialized(await importWordsToDb(dictionary));
         }
-    })()
+    })();
 
     return (
         <div className="m-auto" style={{maxWidth: '500px'}}>
@@ -37,7 +37,7 @@ const App: React.FC = () => {
                     : <LoadingMessage message={'Initializing database, it may take a while'}></LoadingMessage>
             }
         </div>
-    )
-}
+    );
+};
 
-export default App
+export default App;

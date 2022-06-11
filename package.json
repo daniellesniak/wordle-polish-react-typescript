@@ -11,7 +11,8 @@
     "build": "parcel build ./src/index.html --public-url ./",
     "test": "jest --config jest.config.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "push-gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose"
+    "push-gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -46,6 +47,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.4.0",
+    "eslint-plugin-standard": "^5.0.0",
     "fake-indexeddb": "^3.1.7",
     "jest": "^27.5.1",
     "jest-transform-stub": "^2.0.0",

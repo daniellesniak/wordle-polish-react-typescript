@@ -1,6 +1,6 @@
-import React from "react"
-import RefreshIcon from "./Icons/Refresh"
-import { twMerge }  from "tailwind-merge"
+import React from "react";
+import RefreshIcon from "./Icons/Refresh";
+import { twMerge }  from "tailwind-merge";
 
 interface Heading {
     text?: string,
@@ -35,7 +35,7 @@ const Replay: React.FC<Props> = (props: Props) => {
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Replay
+export default Replay;
