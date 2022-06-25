@@ -25,10 +25,10 @@ const EXAMPLE_ROW_CELLS: Record<string, RowCell[]> = {
     ],
     [RowCellStatus.ABSENT]: [
         { letter: "b", status: RowCellStatus.DEFAULT },
-        { letter: "e", status: RowCellStatus.DEFAULT },
-        { letter: "r", status: RowCellStatus.DEFAULT },
-        { letter: "y", status: RowCellStatus.ABSENT },
-        { letter: "l", status: RowCellStatus.DEFAULT },
+        { letter: "o", status: RowCellStatus.DEFAULT },
+        { letter: "n", status: RowCellStatus.DEFAULT },
+        { letter: "u", status: RowCellStatus.ABSENT },
+        { letter: "s", status: RowCellStatus.DEFAULT },
     ],
 };
 
@@ -102,7 +102,7 @@ const HelpModal: React.FC<Props> = (props: Props): React.ReactElement => {
 
                                         <p className="py-2 mb-2">
                                             <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.ABSENT]} index={0} />
-                                            <p>The letter <strong>Y</strong> is in the word but in the wrong spot.</p>
+                                            <p>The letter <strong>U</strong> is in the word but in the wrong spot.</p>
                                         </p>
                                     </div>
 
