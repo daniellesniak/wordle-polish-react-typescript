@@ -4,6 +4,7 @@ import { db } from "../db";
 import { importWordsToDb } from "../wordsImporter";
 import LoadingMessage from "./LoadingMessage";
 import HelpModal from "./HelpModal";
+import TheHeader from "./TheHeader";
 
 let dictionary: string[] = [];
 async function loadDictionary() { // parcel's dynamic import
@@ -28,12 +29,8 @@ const App: React.FC = () => {
     return (
         <>
         <HelpModal isOpen={true} />
+        <TheHeader />
         <div className="m-auto" style={{maxWidth: '500px'}}>
-            <div className="flex justify-center items-center py-3">
-                <div>
-                    <h1 className="text-4xl font-bold text-gray-100 select-none">Wordle PL</h1>
-                </div>
-            </div>
             
             { isDbInitialized 
                     ? <Game correctWord={correctWord} handleCorrectWordChange={setCorrectWord}></Game>
