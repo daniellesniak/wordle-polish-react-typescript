@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@headlessui/react": "^1.6.5",
     "@testing-library/react": "12.1.5",
     "@types/jest": "^27.4.1",
     "dexie": "^3.2.1",

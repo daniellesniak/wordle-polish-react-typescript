@@ -3,6 +3,7 @@ import Game from "./Game";
 import { db } from "../db";
 import { importWordsToDb } from "../wordsImporter";
 import LoadingMessage from "./LoadingMessage";
+import HelpModal from "./HelpModal";
 
 let dictionary: string[] = [];
 async function loadDictionary() { // parcel's dynamic import
@@ -25,6 +26,8 @@ const App: React.FC = () => {
     })();
 
     return (
+        <>
+        <HelpModal isOpen={true} />
         <div className="m-auto" style={{maxWidth: '500px'}}>
             <div className="flex justify-center items-center py-3">
                 <div>
@@ -37,6 +40,7 @@ const App: React.FC = () => {
                     : <LoadingMessage message={'Initializing database, it may take a while'}></LoadingMessage>
             }
         </div>
+        </>
     );
 };
 

@@ -7,19 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { db } from "../db";
 import Grid from "../grid";
  
-enum GameState {
-    WIN,
-    LOSE,
-    IN_PROGRESS
-}
-
-export enum RowCellStatus {
-    CORRECT = 3,
-    ELSEWHERE = 2,
-    ABSENT = 1,
-    DEFAULT = 0
-}
-
 export interface RowCell {
     letter: string|null,
     status: RowCellStatus
@@ -37,6 +24,19 @@ type State = {
     gameState: GameState,
 }
 
+enum GameState {
+    WIN,
+    LOSE,
+    IN_PROGRESS
+}
+
+export enum RowCellStatus {
+    CORRECT = 3,
+    ELSEWHERE = 2,
+    ABSENT = 1,
+    DEFAULT = 0
+}
+
 const TOASTS: Record<string, string> = {
     invalidWord: '😬 Not in dictionary.',
     rowNotComplete: '👀 Word is not complete.',
@@ -51,12 +51,7 @@ export default class Game extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {
-            grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
-            colPointer: 0,
-            nextRowPointer: 0,
-            gameState: GameState.IN_PROGRESS,
-        };
+        this.state = this.initState();
 
         this.appendLetter = this.appendLetter.bind(this);
         this.popLetter = this.popLetter.bind(this);
@@ -69,11 +64,35 @@ export default class Game extends React.Component<Props, State> {
         this.startGame();
     }
 
+    componentWillUnmount(): void {
+        this.removeKeyboardEventListener();
+    }
+
+    removeKeyboardEventListener(): void {
+        document.removeEventListener('keydown', this.handleKeyboard);
+    }
+
+    startGame(): void {
+        this.setRandomWordToGuess();
+
+        this.setState(this.initState());
+
+        document.addEventListener('keydown', this.handleKeyboard);
+    }
+
     handleKeyboard(e: KeyboardEvent): void {
         const commandButtonHandlers = this.keyboardCommandKeyHandlers();
 
-        if (keyboardLayout.flat().includes(e.key)){
-            if (Object.values<string>(CMD_KEYS).includes(e.key)) {
+        const isAllowedKeyboardKey = (key: string): boolean => {
+            return keyboardLayout.flat().includes(key);
+        };
+
+        const isCommandKey = (key: string): boolean => {
+            return Object.values<string>(CMD_KEYS).includes(key);
+        };
+
+        if (isAllowedKeyboardKey(e.key)){
+            if (isCommandKey(e.key)) {
                 commandButtonHandlers[e.key as CMD_KEYS]();
             } else {
                 this.appendLetter(e.key);
@@ -81,8 +100,13 @@ export default class Game extends React.Component<Props, State> {
         }
     }
 
-    componentWillUnmount(): void {
-        this.removeKeyboardEventListener();
+    initState(): State {
+        return {
+            grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
+            colPointer: 0,
+            nextRowPointer: 0,
+            gameState: GameState.IN_PROGRESS,
+        };
     }
 
     initGrid(colsCount: number, rowsCount: number): RowCell[][] {
@@ -94,19 +118,6 @@ export default class Game extends React.Component<Props, State> {
                 };
             });
         });
-    }
-
-    startGame() {
-        this.setRandomWordToGuess();
-
-        this.setState({
-            grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
-            colPointer: 0,
-            nextRowPointer: 0,
-            gameState: GameState.IN_PROGRESS,
-        });
-
-        document.addEventListener('keydown', this.handleKeyboard);
     }
 
     render() {
@@ -257,9 +268,5 @@ export default class Game extends React.Component<Props, State> {
         this.removeKeyboardEventListener();
         this.setState({ gameState: GameState.LOSE });
         toast(TOASTS[GameState.LOSE] + this.props.correctWord);
-    }
-
-    removeKeyboardEventListener() {
-        document.removeEventListener('keydown', this.handleKeyboard);
     }
 }
