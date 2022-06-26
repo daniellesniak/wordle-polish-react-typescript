@@ -68,15 +68,15 @@ const HelpModal: React.FC<Props> = (props: Props): React.ReactElement => {
                             >
                                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-700 text-gray-100 p-6 text-left align-middle shadow-xl transition-all">
                                     <div className="mt-2">
-                                        <p>
+                                        <div>
                                             Guess the <strong>WORDLE</strong> in six tries.
-                                        </p>
+                                        </div>
                                     </div>
                                     
                                     <div className="mt-2">
-                                        <p>
+                                        <div>
                                             Each guess must be a valid five-letter word. Hit the enter button to submit.
-                                        </p>
+                                        </div>
                                     </div>
                                     
                                     <div className="mt-2">
@@ -86,24 +86,24 @@ const HelpModal: React.FC<Props> = (props: Props): React.ReactElement => {
                                     </div>
 
                                     <div className="mt-4 border-y border-white py-2">
-                                        <p className="mb-2">
+                                        <div className="mb-2">
                                             <strong>Examples</strong>
-                                        </p>
+                                        </div>
 
-                                        <p className="py-2 mb-2">
+                                        <div className="py-2 mb-2">
                                             <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.CORRECT]} index={0} />
                                             <p>The letter <strong>T</strong> is in the word and in the correct spot.</p>
-                                        </p>
+                                        </div>
 
-                                        <p className="py-2 mb-2">
+                                        <div className="py-2 mb-2">
                                             <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.ELSEWHERE]} index={0} />
                                             <p>The letter <strong>R</strong> is in the word but in the wrong spot.</p>
-                                        </p>
+                                        </div>
 
-                                        <p className="py-2 mb-2">
+                                        <div className="py-2 mb-2">
                                             <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.ABSENT]} index={0} />
                                             <p>The letter <strong>U</strong> is in the word but in the wrong spot.</p>
-                                        </p>
+                                        </div>
                                     </div>
 
                                     <div className="mt-4">
