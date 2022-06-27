@@ -6,9 +6,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { db } from "../db";
 import Grid from "../grid";
- 
+import { Transition } from "@headlessui/react";
+
 export interface RowCell {
-    letter: string|null,
+    letter: string | null,
     status: RowCellStatus
 }
 
@@ -48,6 +49,8 @@ export default class Game extends React.Component<Props, State> {
     ROWS_COUNT = 6;
     ROW_MAX_LETTERS = 5;
 
+    isShowing = false;
+
     constructor(props: Props) {
         super(props);
 
@@ -76,6 +79,7 @@ export default class Game extends React.Component<Props, State> {
         this.setRandomWordToGuess();
 
         this.setState(this.initState());
+        this.isShowing = true;
 
         document.addEventListener('keydown', this.handleKeyboard);
     }
@@ -91,7 +95,7 @@ export default class Game extends React.Component<Props, State> {
             return Object.values<string>(CMD_KEYS).includes(key);
         };
 
-        if (isAllowedKeyboardKey(e.key)){
+        if (isAllowedKeyboardKey(e.key)) {
             if (isCommandKey(e.key)) {
                 commandButtonHandlers[e.key as CMD_KEYS]();
             } else {
@@ -122,48 +126,57 @@ export default class Game extends React.Component<Props, State> {
 
     render() {
         return (
-            <>
-            <div className="flex flex-col" data-testid="grid">
-                {this.state.grid.map((rowCells: RowCell[], i: number) => {
-                    return <Row key={i} index={i} rowCells={rowCells}></Row>;
-                })}
-            </div>
+            <Transition
+                as="div"
+                show={this.isShowing}
+                enter="transform transition duration-[400ms]"
+                enterFrom="opacity-0 rotate-[-120deg] scale-50"
+                enterTo="opacity-100 rotate-0 scale-100"
+                leave="transform duration-200 transition ease-in-out"
+                leaveFrom="opacity-100 rotate-0 scale-100 "
+                leaveTo="opacity-0 scale-95"
+            >
+                <div className="flex flex-col" data-testid="grid">
+                    {this.state.grid.map((rowCells: RowCell[], i: number) => {
+                        return <Row key={i} index={i} rowCells={rowCells}></Row>;
+                    })}
+                </div>
 
-            {this.state.gameState === GameState.IN_PROGRESS &&
-            <Keyboard
-                handleAppendLetter={this.appendLetter}
-                commandKeysHandlers={this.keyboardCommandKeyHandlers()}
-                submittedRows={this.getSubmittedRows()}
-            />}
+                {this.state.gameState === GameState.IN_PROGRESS &&
+                    <Keyboard
+                        handleAppendLetter={this.appendLetter}
+                        commandKeysHandlers={this.keyboardCommandKeyHandlers()}
+                        submittedRows={this.getSubmittedRows()}
+                    />}
 
-            <ToastContainer
-                position="bottom-left"
-                autoClose={5000}
-                closeOnClick
-                theme="dark"
-            />
+                <ToastContainer
+                    position="bottom-left"
+                    autoClose={5000}
+                    closeOnClick
+                    theme="dark"
+                />
 
-            {this.state.gameState === GameState.LOSE &&
-            <Replay
-                handleReplay={this.startGame} 
-                heading={{
-                        text: TOASTS[GameState.LOSE] + this.props.correctWord,
-                        className: "text-red-600",
-                    }}
-            />}
+                {this.state.gameState === GameState.LOSE &&
+                    <Replay
+                        handleReplay={this.startGame}
+                        heading={{
+                            text: TOASTS[GameState.LOSE] + this.props.correctWord,
+                            className: "text-red-600",
+                        }}
+                    />}
 
-            {this.state.gameState === GameState.WIN &&
-            <Replay
-                handleReplay={this.startGame} 
-                heading={{
-                        text: TOASTS[GameState.WIN],
-                        className: "text-green-600",
-                    }}
-                button={{
-                    className: "bg-green-500 hover:bg-green-600 focus:bg-green-700",
-                }}
-            />}
-            </>
+                {this.state.gameState === GameState.WIN &&
+                    <Replay
+                        handleReplay={this.startGame}
+                        heading={{
+                            text: TOASTS[GameState.WIN],
+                            className: "text-green-600",
+                        }}
+                        button={{
+                            className: "bg-green-500 hover:bg-green-600 focus:bg-green-700",
+                        }}
+                    />}
+            </Transition>
         );
     }
 
@@ -201,7 +214,7 @@ export default class Game extends React.Component<Props, State> {
     }
 
     async submitAnswer(): Promise<void> {
-        if (! this.isCurrentRowComplete()) {
+        if (!this.isCurrentRowComplete()) {
             toast(TOASTS.rowNotComplete);
             return;
         } else if (! await this.doesWordExistsInDictionary(this.getCurrentRowCells())) {
@@ -211,7 +224,7 @@ export default class Game extends React.Component<Props, State> {
 
         this.changeRowCellsStatuses();
 
-        switch(this.determineGameStatus()) {
+        switch (this.determineGameStatus()) {
             case GameState.WIN:
                 this.doWinActions();
                 return;
@@ -232,13 +245,13 @@ export default class Game extends React.Component<Props, State> {
     }
 
     isCurrentRowComplete(): boolean {
-        return ! Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer);
+        return !Grid.hasRowEmptyLetters(this.state.grid, this.state.colPointer);
     }
 
     getCurrentRowCells(): string {
         return Grid.getRowCells(this.state.grid, this.state.colPointer)
-                .map((rowCell: RowCell) => rowCell.letter)
-                .join('');
+            .map((rowCell: RowCell) => rowCell.letter)
+            .join('');
     }
 
     changeRowCellsStatuses() {
@@ -250,7 +263,7 @@ export default class Game extends React.Component<Props, State> {
     determineGameStatus(): GameState {
         const doesGuessMatch = this.getCurrentRowCells() === this.props.correctWord;
         const hasReachedMaxCols = this.state.colPointer + 1 === this.ROWS_COUNT;
-        
+
         return doesGuessMatch ? GameState.WIN : hasReachedMaxCols ? GameState.LOSE : GameState.IN_PROGRESS;
     }
 
