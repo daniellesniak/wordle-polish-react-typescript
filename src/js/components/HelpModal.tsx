@@ -1,11 +1,12 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { RowCell } from "./Game";
 import { RowCellStatus } from "./Game";
 import Row from "./Row";
 
 type Props = {
-    isOpen: boolean
+    isOpen: boolean,
+    handleOpenHelpModal: CallableFunction
 }
 
 const EXAMPLE_ROW_CELLS: Record<string, RowCell[]> = {
@@ -33,15 +34,13 @@ const EXAMPLE_ROW_CELLS: Record<string, RowCell[]> = {
 };
 
 const HelpModal: React.FC<Props> = (props: Props): React.ReactElement => {
-    const [isOpen, setIsOpen] = useState(props.isOpen);
-
     function closeModal() {
-        setIsOpen(false);
+        props.handleOpenHelpModal(false);
     }
 
     return (
         <>
-            <Transition appear show={isOpen} as={Fragment}>
+            <Transition appear show={props.isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                     <Transition.Child
                         as={Fragment}

@@ -16,6 +16,7 @@ async function loadDictionary() { // parcel's dynamic import
 const App: React.FC = () => {
     const [isDbInitialized, setIsDbInitialized] = useState(false);
     const [correctWord, setCorrectWord] = useState('');
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(true);
 
     (async() => {
         if (await db.count() > 0) {
@@ -28,8 +29,8 @@ const App: React.FC = () => {
 
     return (
         <>
-        <HelpModal isOpen={true} />
-        <TheHeader />
+        <HelpModal isOpen={isHelpModalOpen} handleOpenHelpModal={setIsHelpModalOpen} />
+        <TheHeader handleOpenHelpModal={setIsHelpModalOpen} />
         <div className="m-auto" style={{maxWidth: '500px'}}>
             
             { isDbInitialized 
