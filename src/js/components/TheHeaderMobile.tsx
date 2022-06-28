@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react";
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, ReactElement } from "react";
 import CloseIcon from "./Icons/Close";
 import { NavItem } from "./TheHeader";
 
@@ -8,25 +8,60 @@ type Props = {
 }
 
 const TheHeaderMobile: React.FC<Props> = (props: Props) => {
-    const [isMenuOpened, setIsMenuOpened] = useState(false);
+    const [isNavOpened, setIsMenuOpened] = useState(false);
 
-    function openMenu() {
+    function openNav() {
         setIsMenuOpened(true);
     }
 
-    function closeMenu() {
+    function closeNav() {
         setIsMenuOpened(false);
     }
 
     const navItems = props.navItems.map((navItem: NavItem, key: number) => {
-        return (
-            <span key={key} className="hover:bg-gray-600 w-screen py-10 text-center" onClick={navItem.onClick}>{navItem.text}</span>
-        );
+        return renderNavItem(key, navItem);
     });
 
-    const nav = (
+    const nav = renderNav(navItems, closeNav);
+
+    const hamburgerButton = renderHamburger(openNav);
+
+    return (
+        <>
+            {renderWithEaseInOutTransition(isNavOpened, nav)}
+            {renderWithEaseInOutTransition(!isNavOpened, hamburgerButton)}
+        </>
+    );
+};
+
+export default TheHeaderMobile;
+
+function renderHamburger(onClick: CallableFunction): ReactElement {
+    return (
+        <button className="absolute p-6 space-y-2 rounded shadow md:hidden z-10" onClick={() => onClick()}>
+            <span className="block w-8 h-0.5 bg-gray-100"></span>
+            <span className="block w-8 h-0.5 bg-gray-100"></span>
+            <span className="block w-8 h-0.5 bg-gray-100"></span>
+        </button>
+    );
+}
+
+function renderNavItem(key: number, navItem: NavItem): ReactElement {
+    return (
+        <span
+            key={key}
+            className="hover:bg-gray-600 w-screen py-10 text-center"
+            onClick={navItem.onClick}
+        >
+            {navItem.text}
+        </span>
+    );
+}
+
+function renderNav(navItems: ReactElement[], handleCloseNav: CallableFunction) {
+    return (
         <div className="fixed w-screen h-screen bg-black z-50 md:hidden">
-            <button className="absolute m-4" onClick={() => closeMenu()}>
+            <button className="absolute m-4" onClick={() => handleCloseNav()}>
                 <CloseIcon />
             </button>
             <div className="grid py-20 justify-items-center items-center h-screen text-4xl">
@@ -34,46 +69,21 @@ const TheHeaderMobile: React.FC<Props> = (props: Props) => {
             </div>
         </div>
     );
+}
 
-    const openButton = (
-        <button className="absolute p-6 space-y-2 rounded shadow md:hidden z-10" onClick={() => openMenu()}>
-            <span className="block w-8 h-0.5 bg-gray-100"></span>
-            <span className="block w-8 h-0.5 bg-gray-100"></span>
-            <span className="block w-8 h-0.5 bg-gray-100"></span>
-        </button>
-    );
-
+function renderWithEaseInOutTransition(isShowing: boolean, element: ReactElement): ReactElement {
     return (
-        <>
-            <Transition
-                appear={isMenuOpened}
-                as={Fragment}
-                show={isMenuOpened}
-                enter="transition ease-in-out duration-500 transform"
-                enterFrom="-translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-500 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full"
-            >
-                {nav}
-            </Transition>
-            
-            <Transition
-                appear={!isMenuOpened}
-                as={Fragment}
-                show={!isMenuOpened}
-                enter="transition ease-in-out duration-500 transform"
-                enterFrom="-translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-500 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full"
-            >
-                {openButton}
-            </Transition>
-        </>
+        <Transition
+            as={Fragment}
+            show={isShowing}
+            enter="transition ease-in-out duration-500 transform"
+            enterFrom="-translate-x-full"
+            enterTo="translate-x-0"
+            leave="transition ease-in-out duration-500 transform"
+            leaveFrom="translate-x-0"
+            leaveTo="-translate-x-full"
+        >
+            {element}
+        </Transition>
     );
-};
-
-export default TheHeaderMobile;
+}
