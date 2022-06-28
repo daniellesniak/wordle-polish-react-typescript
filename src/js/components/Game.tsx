@@ -126,6 +126,14 @@ export default class Game extends React.Component<Props, State> {
 
     render() {
         return (
+            <>
+            <ToastContainer
+                position="top-left"
+                autoClose={5000}
+                closeOnClick
+                theme="dark"
+            />
+
             <Transition
                 as="div"
                 show={this.isShowing}
@@ -149,13 +157,6 @@ export default class Game extends React.Component<Props, State> {
                         submittedRows={this.getSubmittedRows()}
                     />}
 
-                <ToastContainer
-                    position="bottom-left"
-                    autoClose={5000}
-                    closeOnClick
-                    theme="dark"
-                />
-
                 {this.state.gameState === GameState.LOSE &&
                     <Replay
                         handleReplay={this.startGame}
@@ -177,6 +178,7 @@ export default class Game extends React.Component<Props, State> {
                         }}
                     />}
             </Transition>
+            </>
         );
     }
 
