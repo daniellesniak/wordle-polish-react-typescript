@@ -1,7 +1,7 @@
 import { Transition } from "@headlessui/react";
 import React, { MouseEventHandler, ReactElement, useState } from "react";
-import QuestionMarkIcon from "./Icons/QuestionMark";
 import TheHeaderMobile from "./TheHeaderMobile";
+import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
 
 type Props = {
     handleOpenHelpModal: CallableFunction
@@ -14,6 +14,8 @@ export type NavItem = {
     iconElement: ReactElement
 }
 
+const NAV_ICON_DEFAULT_CLASS = "w-6 h-6";
+
 const TheHeader: React.FC<Props> = (props: Props) => {
     const [isShowing] = useState(true);
 
@@ -22,7 +24,7 @@ const TheHeader: React.FC<Props> = (props: Props) => {
             text: 'Help',
             title: 'Show help modal',
             onClick: () => props.handleOpenHelpModal(true),
-            iconElement: <QuestionMarkIcon />,
+            iconElement: <QuestionMarkCircleIcon className={NAV_ICON_DEFAULT_CLASS} />,
         },
     ];
 
@@ -33,7 +35,7 @@ const TheHeader: React.FC<Props> = (props: Props) => {
                 type="button"
                 title={navItem.title}
                 onClick={navItem.onClick}
-                className="py-1 px-2 bg-transparent text-white rounded inline hover:bg-white hover:text-black"
+                className="py-1 px-2 bg-transparent rounded inline text-gray-100 hover:bg-gray-100 hover:text-gray-700"
             >
                 {navItem.iconElement}
             </button>

@@ -1,6 +1,6 @@
 import React from "react";
-import RefreshIcon from "./Icons/Refresh";
 import { twMerge }  from "tailwind-merge";
+import { RefreshIcon } from "@heroicons/react/outline";
 
 interface Heading {
     text?: string,
@@ -31,7 +31,7 @@ const Replay: React.FC<Props> = (props: Props) => {
                     className={twMerge("py-1 px-8 bg-red-500 text-black rounded inline hover:bg-red-600 focus:bg-red-700", props.button?.className ?? '') }
                     data-testid="replay-button"
                 >
-                    <RefreshIcon /> Replay
+                    <RefreshIcon className="w-6 h-6 inline" /> Replay
                 </button>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import { Transition } from "@headlessui/react";
 import React, { useState, Fragment, ReactElement } from "react";
-import CloseIcon from "./Icons/Close";
 import { NavItem } from "./TheHeader";
+import { XIcon } from "@heroicons/react/outline";
 
 type Props = {
     navItems: NavItem[]
@@ -60,9 +60,9 @@ function renderNavItem(key: number, navItem: NavItem): ReactElement {
 
 function renderNav(navItems: ReactElement[], handleCloseNav: CallableFunction) {
     return (
-        <div className="fixed w-screen h-screen bg-black z-50 md:hidden">
-            <button className="absolute m-4" onClick={() => handleCloseNav()}>
-                <CloseIcon />
+        <div className="fixed w-screen h-screen bg-black z-50 md:hidden" data-testid="testtest">
+            <button className="absolute p-4" onClick={() => handleCloseNav()}>
+                <XIcon className="w-8 h-8" />
             </button>
             <div className="grid py-20 justify-items-center items-center h-screen text-4xl">
                 {navItems}
