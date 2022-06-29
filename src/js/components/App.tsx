@@ -35,7 +35,7 @@ const App: React.FC = () => {
             
             { isDbInitialized 
                     ? <Game correctWord={correctWord} handleCorrectWordChange={setCorrectWord}></Game>
-                    : <LoadingMessage message={'Initializing database, it may take a while'}></LoadingMessage>
+                    : <LoadingMessage message={'Initializing database, it may take a while'} withEllipsis={true}></LoadingMessage>
             }
         </div>
         </>

@@ -1,40 +1,40 @@
 import { Transition } from "@headlessui/react";
 import React, { useState, Fragment, ReactElement } from "react";
-import { NavItem } from "./TheHeader";
+import { type NavItem } from "./TheHeader";
 import { XIcon } from "@heroicons/react/outline";
 
 type Props = {
     navItems: NavItem[]
 }
 
-const TheHeaderMobile: React.FC<Props> = (props: Props) => {
-    const [isNavOpened, setIsMenuOpened] = useState(false);
+const MobileNav: React.FC<Props> = ({ navItems }: Props): ReactElement => {
+    const [isNavOpened, setIsNavOpened] = useState(false);
 
-    function openNav() {
-        setIsMenuOpened(true);
+    function openNav(): void {
+        setIsNavOpened(true);
     }
 
-    function closeNav() {
-        setIsMenuOpened(false);
+    function closeNav(): void {
+        setIsNavOpened(false);
     }
 
-    const navItems = props.navItems.map((navItem: NavItem, key: number) => {
+    const navItemElements: ReactElement[] = navItems.map((navItem: NavItem, key: number) => {
         return renderNavItem(key, navItem);
     });
 
-    const nav = renderNav(navItems, closeNav);
+    const navElement: ReactElement = renderNav(navItemElements, closeNav);
 
-    const hamburgerButton = renderHamburger(openNav);
+    const hamburgerButton: ReactElement = renderHamburger(openNav);
 
     return (
         <>
-            {renderWithEaseInOutTransition(isNavOpened, nav)}
+            {renderWithEaseInOutTransition(isNavOpened, navElement)}
             {renderWithEaseInOutTransition(!isNavOpened, hamburgerButton)}
         </>
     );
 };
 
-export default TheHeaderMobile;
+export default MobileNav;
 
 function renderHamburger(onClick: CallableFunction): ReactElement {
     return (
@@ -60,14 +60,14 @@ function renderNavItem(key: number, navItem: NavItem): ReactElement {
 
 function renderNav(navItems: ReactElement[], handleCloseNav: CallableFunction) {
     return (
-        <div className="fixed w-screen h-screen bg-black z-50 md:hidden" data-testid="testtest">
+        <nav className="fixed w-screen h-screen bg-black z-50 md:hidden" data-testid="testtest">
             <button className="absolute p-4" onClick={() => handleCloseNav()}>
                 <XIcon className="w-8 h-8" />
             </button>
             <div className="grid py-20 justify-items-center items-center h-screen text-4xl">
                 {navItems}
             </div>
-        </div>
+        </nav>
     );
 }
 

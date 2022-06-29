@@ -1,10 +1,10 @@
 import { Transition } from "@headlessui/react";
 import React, { MouseEventHandler, ReactElement, useState } from "react";
-import TheHeaderMobile from "./TheHeaderMobile";
+import MobileNav from "./MobileNav";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
 
 type Props = {
-    handleOpenHelpModal: CallableFunction
+    handleOpenHelpModal: (shouldOpen: boolean) => void
 }
 
 export type NavItem = {
@@ -16,38 +16,28 @@ export type NavItem = {
 
 const NAV_ICON_DEFAULT_CLASS = "w-6 h-6";
 
-const TheHeader: React.FC<Props> = (props: Props) => {
-    const [isShowing] = useState(true);
+const TheHeader: React.FC<Props> = ({ handleOpenHelpModal }: Props) => {
+    const [isHeaderShowing] = useState(true);
 
     const navItems: NavItem[] = [
         {
             text: 'Help',
             title: 'Show help modal',
-            onClick: () => props.handleOpenHelpModal(true),
+            onClick: () => handleOpenHelpModal(true),
             iconElement: <QuestionMarkCircleIcon className={NAV_ICON_DEFAULT_CLASS} />,
         },
     ];
 
-    const mdDevicesNavItems = navItems.map((navItem: NavItem, key: number) => {
-        return (
-            <button
-                key={key}
-                type="button"
-                title={navItem.title}
-                onClick={navItem.onClick}
-                className="py-1 px-2 bg-transparent rounded inline text-gray-100 hover:bg-gray-100 hover:text-gray-700"
-            >
-                {navItem.iconElement}
-            </button>
-        );
+    const navItemsForMdDevices = navItems.map((navItem: NavItem, key: number) => {
+        return renderNavItemForMdDevices(navItem, key);
     });
 
     return (
         <>
-            <TheHeaderMobile navItems={navItems}/>
+            <MobileNav navItems={navItems}/>
             <Transition
                 appear={true}
-                show={isShowing}
+                show={isHeaderShowing}
                 enter="transition ease-in-out duration-500 transform"
                 enterFrom="-translate-x-full"
                 enterTo="translate-x-0"
@@ -65,7 +55,7 @@ const TheHeader: React.FC<Props> = (props: Props) => {
                         </div>
                         <div className="flex-1 text-right">
                             <div className="hidden md:block px-4 space-x-1">
-                                {mdDevicesNavItems}
+                                {navItemsForMdDevices}
                             </div>
                         </div>
                     </nav>
@@ -76,3 +66,17 @@ const TheHeader: React.FC<Props> = (props: Props) => {
 };
 
 export default TheHeader;
+
+function renderNavItemForMdDevices(navItem: NavItem, key: number): ReactElement {
+    return (
+        <button
+            key={key}
+            type="button"
+            title={navItem.title}
+            onClick={navItem.onClick}
+            className="py-1 px-2 bg-transparent rounded inline text-gray-100 hover:bg-gray-100 hover:text-gray-700"
+        >
+            {navItem.iconElement}
+        </button>
+    );
+}

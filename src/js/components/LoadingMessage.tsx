@@ -1,42 +1,54 @@
 import React, { FC, useState, useEffect } from "react";
 
-interface Props {
-    message: string
-    withEllipsis?: boolean
-    ellipsisSign?: string
+type Ellipsis = {
+    sign: string,
+    intervalInMs: number,
+    maxLength: number
 }
 
-const LoadingMessage: FC<Props> = (props: Props) => {
-    const dots = useEllipsis(props.ellipsisSign);
+interface Props {
+    message: string
+    withEllipsis?: boolean,
+    ellipsis?: Ellipsis
+}
+
+const LoadingMessage: FC<Props> = ({message, withEllipsis, ellipsis}: Props) => {
+    const dots = useEllipsis(ellipsis);
 
     return (
         <div className="flex justify-center items-center py-3 text-white text-xl">
-            {props.message + (props.withEllipsis ? dots : '')}
+            {message + (withEllipsis ? dots : '')}
         </div>
     );
 };
 
-function useEllipsis(ellipsisSign: string, maxLength = 3) {
-    const [ellipsis, setEllipsis] = useState(ellipsisSign);
+function useEllipsis(ellipsis: Ellipsis) {
+    const [ellipsisContent, setEllipsis] = useState(ellipsis.sign);
 
     useEffect(() => {
+        function determineEllipsis() {
+            return ellipsisContent.length === ellipsis.maxLength
+                ? ellipsis.sign 
+                : ellipsisContent + ellipsis.sign;
+        }
+
         const ellipsisTimer = setTimeout(() => {
-            if (ellipsis.length === maxLength) {
-                setEllipsis(ellipsisSign);
-            } else {
-                setEllipsis(ellipsis + ellipsisSign);
-            }
+            setEllipsis(determineEllipsis());
         }, 1000);
 
         return () => clearTimeout(ellipsisTimer);
-    }, [ellipsis, ellipsisSign, maxLength]);
+    }, [ellipsisContent, ellipsis]);
 
-    return ellipsis;
+    return ellipsisContent;
 }
 
 LoadingMessage.defaultProps = {
-    withEllipsis: true,
-    ellipsisSign: '.',
+    withEllipsis: false,
+    ellipsis: {
+        sign: '.',
+        intervalInMs: 1000,
+        maxLength: 3,
+    },
 };
 
 export default LoadingMessage;

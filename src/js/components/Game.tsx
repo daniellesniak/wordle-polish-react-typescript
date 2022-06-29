@@ -49,7 +49,7 @@ export default class Game extends React.Component<Props, State> {
     ROWS_COUNT = 6;
     ROW_MAX_LETTERS = 5;
 
-    isShowing = false;
+    isGameShowing = false;
 
     constructor(props: Props) {
         super(props);
@@ -79,7 +79,7 @@ export default class Game extends React.Component<Props, State> {
         this.setRandomWordToGuess();
 
         this.setState(this.initState());
-        this.isShowing = true;
+        this.isGameShowing = true;
 
         document.addEventListener('keydown', this.handleKeyboard);
     }
@@ -136,7 +136,7 @@ export default class Game extends React.Component<Props, State> {
 
             <Transition
                 as="div"
-                show={this.isShowing}
+                show={this.isGameShowing}
                 enter="transform transition duration-[400ms]"
                 enterFrom="opacity-0 rotate-[-120deg] scale-50"
                 enterTo="opacity-100 rotate-0 scale-100"
