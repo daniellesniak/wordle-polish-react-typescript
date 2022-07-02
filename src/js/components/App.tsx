@@ -4,6 +4,7 @@ import { db } from "../db";
 import { importWordsToDb } from "../wordsImporter";
 import LoadingMessage from "./LoadingMessage";
 import HelpModal from "./HelpModal";
+import StatsModal from "./StatsModal";
 import TheHeader from "./TheHeader";
 
 let dictionary: string[] = [];
@@ -17,6 +18,7 @@ const App: React.FC = () => {
     const [isDbInitialized, setIsDbInitialized] = useState(false);
     const [correctWord, setCorrectWord] = useState('');
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(true);
+    const [isStatsModalOpen, setIsStatModalOpen] = useState(false);
 
     (async() => {
         if (await db.count() > 0) {
@@ -30,7 +32,8 @@ const App: React.FC = () => {
     return (
         <>
         <HelpModal isOpen={isHelpModalOpen} handleOpenHelpModal={setIsHelpModalOpen} />
-        <TheHeader handleOpenHelpModal={setIsHelpModalOpen} />
+        <StatsModal isOpen={isStatsModalOpen} handleOpenStatsModal={setIsStatModalOpen} />
+        <TheHeader handleOpenHelpModal={setIsHelpModalOpen} handleOpenStatsModal={setIsStatModalOpen} />
         <div className="m-auto" style={{maxWidth: '500px'}}>
             
             { isDbInitialized 

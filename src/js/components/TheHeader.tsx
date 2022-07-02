@@ -2,9 +2,11 @@ import { Transition } from "@headlessui/react";
 import React, { MouseEventHandler, ReactElement, useState } from "react";
 import MobileNav from "./MobileNav";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
+import { ChartBarIcon } from "@heroicons/react/outline";
 
 type Props = {
-    handleOpenHelpModal: (shouldOpen: boolean) => void
+    handleOpenHelpModal: (shouldOpen: boolean) => void,
+    handleOpenStatsModal: (shouldOpen: boolean) => void
 }
 
 export type NavItem = {
@@ -16,10 +18,16 @@ export type NavItem = {
 
 const NAV_ICON_DEFAULT_CLASS = "w-6 h-6";
 
-const TheHeader: React.FC<Props> = ({ handleOpenHelpModal }: Props) => {
+const TheHeader: React.FC<Props> = ({ handleOpenHelpModal, handleOpenStatsModal }: Props) => {
     const [isHeaderShowing] = useState(true);
 
     const navItems: NavItem[] = [
+        {
+            text: 'Stats',
+            title: 'Show my stats',
+            onClick: () => handleOpenStatsModal(true),
+            iconElement: <ChartBarIcon className={NAV_ICON_DEFAULT_CLASS} />,
+        },
         {
             text: 'Help',
             title: 'Show help modal',

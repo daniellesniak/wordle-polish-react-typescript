@@ -4,7 +4,7 @@ import Row from "./Row";
 import Replay from "./Replay";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { db } from "../db";
+import { db, StatType } from "../db";
 import Grid from "../grid";
 import { Transition } from "@headlessui/react";
 
@@ -243,7 +243,7 @@ export default class Game extends React.Component<Props, State> {
     }
 
     async doesWordExistsInDictionary(word: string): Promise<boolean> {
-        return await db.exists(word);
+        return await db.wordExists(word);
     }
 
     isCurrentRowComplete(): boolean {
@@ -276,12 +276,19 @@ export default class Game extends React.Component<Props, State> {
     doWinActions() {
         this.removeKeyboardEventListener();
         this.setState({ gameState: GameState.WIN });
+        
         toast(TOASTS[GameState.WIN]);
+        
+        db.addStat(StatType.WIN);
     }
 
     doLoseActions() {
         this.removeKeyboardEventListener();
+        
         this.setState({ gameState: GameState.LOSE });
+        
         toast(TOASTS[GameState.LOSE] + this.props.correctWord);
+
+        db.addStat(StatType.LOSE);
     }
 }
