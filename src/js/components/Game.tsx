@@ -1,17 +1,13 @@
 import React from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Transition } from "@headlessui/react";
+import Grid from "../grid";
 import Keyboard, { CMD_KEYS, keyboardLayout } from "./Keyboard";
 import Row from "./Row";
 import Replay from "./Replay";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { db, StatType } from "../db";
-import Grid from "../grid";
-import { Transition } from "@headlessui/react";
-
-export interface RowCell {
-    letter: string | null,
-    status: RowCellStatus
-}
+import { Cell as RowCell } from "./RowCell";
 
 type Props = {
     correctWord: string,
@@ -29,13 +25,6 @@ enum GameState {
     WIN,
     LOSE,
     IN_PROGRESS
-}
-
-export enum RowCellStatus {
-    CORRECT = 3,
-    ELSEWHERE = 2,
-    ABSENT = 1,
-    DEFAULT = 0
 }
 
 const TOASTS: Record<string, string> = {
@@ -106,22 +95,11 @@ export default class Game extends React.Component<Props, State> {
 
     initState(): State {
         return {
-            grid: this.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
+            grid: Grid.initGrid(this.ROWS_COUNT, this.ROW_MAX_LETTERS),
             colPointer: 0,
             nextRowPointer: 0,
             gameState: GameState.IN_PROGRESS,
         };
-    }
-
-    initGrid(colsCount: number, rowsCount: number): RowCell[][] {
-        return Array(colsCount).fill(0).map(() => {
-            return Array(rowsCount).fill(0).map(() => {
-                return {
-                    letter: null,
-                    status: RowCellStatus.DEFAULT,
-                };
-            });
-        });
     }
 
     render() {
@@ -182,12 +160,10 @@ export default class Game extends React.Component<Props, State> {
         );
     }
 
-    async randomWordFromDB(length: number): Promise<string> {
-        return (await db.randomWord(length)).value;
-    }
+    async setRandomWordToGuess(): Promise<void> {
+        const word = (await db.randomWord(this.ROW_MAX_LETTERS)).value;
 
-    async setRandomWordToGuess() {
-        this.props.handleCorrectWordChange(await this.randomWordFromDB(this.ROW_MAX_LETTERS));
+        this.props.handleCorrectWordChange(word);
     }
 
     keyboardCommandKeyHandlers(): Record<CMD_KEYS, CallableFunction> {

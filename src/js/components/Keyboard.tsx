@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import KeyboardKey from "./KeyboardKey";
 import KeyboardCommandButton from "./KeyboardCommandKey";
-import { RowCellStatus, type RowCell } from "./Game";
+import { CellStatus as RowCellStatus, type Cell as RowCell } from "./RowCell";
 
 export enum CMD_KEYS {
     ENTER = 'Enter',

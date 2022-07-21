@@ -1,6 +1,17 @@
-import { RowCellStatus, type RowCell } from "./components/Game";
+import { CellStatus, type Cell as RowCell, CellStatus as RowCellStatus } from "./components/RowCell";
 
 export default class Grid {
+    static initGrid(colsCount: number, rowsCount: number): RowCell[][] {
+        return Array(colsCount).fill(0).map(() => {
+            return Array(rowsCount).fill(0).map(() => {
+                return {
+                    letter: null,
+                    status: RowCellStatus.DEFAULT,
+                };
+            });
+        });
+    }
+
     static appendLetter(gridState: RowCell[][], atRow: number, atRowCell: number, letter: string): RowCell[][] {
         return this.shallow(gridState).map((row: RowCell[], rowIndex: number) => {
             return rowIndex === atRow
@@ -48,10 +59,10 @@ export default class Grid {
             if (rowIndex === atRow) {
                 return row.map((rowCell: RowCell, rowCellIndex: number) => {
                     const status = this.isRowCellStatusCorrect(rowCell, correctWord[rowCellIndex])
-                    ? RowCellStatus.CORRECT
+                    ? CellStatus.CORRECT
                     : this.isRowCellStatusElswhere(rowCell, correctWord)
-                        ? RowCellStatus.ELSEWHERE
-                        : RowCellStatus.ABSENT;
+                        ? CellStatus.ELSEWHERE
+                        : CellStatus.ABSENT;
     
                     return { ...rowCell, status };
                 });

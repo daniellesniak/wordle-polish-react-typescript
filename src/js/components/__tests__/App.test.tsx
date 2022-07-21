@@ -4,8 +4,7 @@ import userEvent from "@testing-library/user-event";
 import Game from "../Game";
 import { db, type Word } from "../../db";
 import { CMD_KEYS, keyboardLayout, KEY_BTN_DEFAULT_CLASS } from "../Keyboard";
-import { rowCellTypeClasses } from "../RowCell";
-import { RowCellStatus } from "../Game";
+import { STATUS_CLASSES as rowCellTypeClasses, CellStatus as RowCellStatus } from "../RowCell";
 import { keyboardKeyTypeClasses } from "../KeyboardKey";
 
 const dictionary: Word[] = [
@@ -289,7 +288,7 @@ describe('coloring rowCells', () => {
     test('colors correct letter at right position green', async () => {
         render(<Game correctWord="morze" handleCorrectWordChange={(): null => null} />);
         
-        const shouldContainClasses = rowCellTypeClasses()[RowCellStatus.CORRECT];
+        const shouldContainClasses = rowCellTypeClasses[RowCellStatus.CORRECT];
         const user = userEvent.setup({ delay: 10 });
 
         await user.keyboard('morze{Enter}');
@@ -304,7 +303,7 @@ describe('coloring rowCells', () => {
     test('colors correct letter elsewhere orange', async () => {
         render(<Game correctWord="morze" handleCorrectWordChange={(): null => null} />);
         
-        const shouldContainClasses = rowCellTypeClasses()[RowCellStatus.ELSEWHERE];
+        const shouldContainClasses = rowCellTypeClasses[RowCellStatus.ELSEWHERE];
         const user = userEvent.setup({ delay: 10 });
 
         await user.keyboard('omlet{Enter}');
@@ -317,7 +316,7 @@ describe('coloring rowCells', () => {
     test('colors absent letter gray', async () => {
         render(<Game correctWord="morze" handleCorrectWordChange={(): null => null} />);
         
-        const shouldContainClasses = rowCellTypeClasses()[RowCellStatus.ABSENT];
+        const shouldContainClasses = rowCellTypeClasses[RowCellStatus.ABSENT];
         const user = userEvent.setup({ delay: 10 });
 
         await user.keyboard('łyżka{Enter}');

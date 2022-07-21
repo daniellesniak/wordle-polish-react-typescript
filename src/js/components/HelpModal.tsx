@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { RowCell } from "./Game";
-import { RowCellStatus } from "./Game";
+import { type Cell as RowCell, CellStatus } from "./RowCell";
 import Row from "./Row";
 
 type Props = {
@@ -10,26 +9,26 @@ type Props = {
 }
 
 const EXAMPLE_ROW_CELLS: Record<string, RowCell[]> = {
-    [RowCellStatus.CORRECT]: [
-        { letter: "s", status: RowCellStatus.DEFAULT },
-        { letter: "t", status: RowCellStatus.CORRECT },
-        { letter: "y", status: RowCellStatus.DEFAULT },
-        { letter: "p", status: RowCellStatus.DEFAULT },
-        { letter: "a", status: RowCellStatus.DEFAULT },
+    [CellStatus.CORRECT]: [
+        { letter: "s", status: CellStatus.DEFAULT },
+        { letter: "t", status: CellStatus.CORRECT },
+        { letter: "y", status: CellStatus.DEFAULT },
+        { letter: "p", status: CellStatus.DEFAULT },
+        { letter: "a", status: CellStatus.DEFAULT },
     ],
-    [RowCellStatus.ELSEWHERE]: [
-        { letter: "b", status: RowCellStatus.DEFAULT },
-        { letter: "e", status: RowCellStatus.DEFAULT },
-        { letter: "r", status: RowCellStatus.ELSEWHERE },
-        { letter: "y", status: RowCellStatus.DEFAULT },
-        { letter: "l", status: RowCellStatus.DEFAULT },
+    [CellStatus.ELSEWHERE]: [
+        { letter: "b", status: CellStatus.DEFAULT },
+        { letter: "e", status: CellStatus.DEFAULT },
+        { letter: "r", status: CellStatus.ELSEWHERE },
+        { letter: "y", status: CellStatus.DEFAULT },
+        { letter: "l", status: CellStatus.DEFAULT },
     ],
-    [RowCellStatus.ABSENT]: [
-        { letter: "b", status: RowCellStatus.DEFAULT },
-        { letter: "o", status: RowCellStatus.DEFAULT },
-        { letter: "n", status: RowCellStatus.DEFAULT },
-        { letter: "u", status: RowCellStatus.ABSENT },
-        { letter: "s", status: RowCellStatus.DEFAULT },
+    [CellStatus.ABSENT]: [
+        { letter: "b", status: CellStatus.DEFAULT },
+        { letter: "o", status: CellStatus.DEFAULT },
+        { letter: "n", status: CellStatus.DEFAULT },
+        { letter: "u", status: CellStatus.ABSENT },
+        { letter: "s", status: CellStatus.DEFAULT },
     ],
 };
 
@@ -90,17 +89,17 @@ const HelpModal: React.FC<Props> = (props: Props): React.ReactElement => {
                                         </div>
 
                                         <div className="py-2 mb-2">
-                                            <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.CORRECT]} index={0} />
+                                            <Row rowCells={EXAMPLE_ROW_CELLS[CellStatus.CORRECT]} index={0} />
                                             <p>The letter <strong>T</strong> is in the word and in the correct spot.</p>
                                         </div>
 
                                         <div className="py-2 mb-2">
-                                            <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.ELSEWHERE]} index={0} />
+                                            <Row rowCells={EXAMPLE_ROW_CELLS[CellStatus.ELSEWHERE]} index={0} />
                                             <p>The letter <strong>R</strong> is in the word but in the wrong spot.</p>
                                         </div>
 
                                         <div className="py-2 mb-2">
-                                            <Row rowCells={EXAMPLE_ROW_CELLS[RowCellStatus.ABSENT]} index={0} />
+                                            <Row rowCells={EXAMPLE_ROW_CELLS[CellStatus.ABSENT]} index={0} />
                                             <p>The letter <strong>U</strong> is in the word but in the wrong spot.</p>
                                         </div>
                                     </div>

@@ -1,4 +1,4 @@
-import { RowCell, RowCellStatus } from "../components/Game";
+import { Cell as RowCell, CellStatus } from "../components/RowCell";
 import Grid from "../grid";
 
 const COLS_COUNT = 6;
@@ -36,23 +36,23 @@ describe('Grid static class', () => {
         expect(Grid.getRowCells(grid, 0)).toMatchObject([
             {
                 letter: "m",
-                status: RowCellStatus.DEFAULT,
+                status: CellStatus.DEFAULT,
             },
             {
                 letter: "o",
-                status: RowCellStatus.DEFAULT,
+                status: CellStatus.DEFAULT,
             },
             {
                 letter: "r",
-                status: RowCellStatus.DEFAULT,
+                status: CellStatus.DEFAULT,
             },
             {
                 letter: "z",
-                status: RowCellStatus.DEFAULT,
+                status: CellStatus.DEFAULT,
             },
             {
                 letter: "e",
-                status: RowCellStatus.DEFAULT,
+                status: CellStatus.DEFAULT,
             },
         ]);
     });
@@ -67,23 +67,23 @@ describe('Grid static class', () => {
         expect(Grid.setAppropriateRowCellsStatuses(grid, 0, "morze")[0]).toMatchObject([
             {
                 letter: 'm',
-                status: RowCellStatus.CORRECT,
+                status: CellStatus.CORRECT,
             },
             {
                 letter: 'o',
-                status: RowCellStatus.CORRECT,
+                status: CellStatus.CORRECT,
             },
             {
                 letter: 'z',
-                status: RowCellStatus.ELSEWHERE,
+                status: CellStatus.ELSEWHERE,
             },
             {
                 letter: 'r',
-                status: RowCellStatus.ELSEWHERE,
+                status: CellStatus.ELSEWHERE,
             },
             {
                 letter: 'y',
-                status: RowCellStatus.ABSENT,
+                status: CellStatus.ABSENT,
             },
         ]);
     });
@@ -116,7 +116,7 @@ function initEmptyGrid(colsCount: number, rowsCount: number){
         return Array(rowsCount).fill(0).map(() => {
             return {
                 letter: null,
-                status: RowCellStatus.DEFAULT,
+                status: CellStatus.DEFAULT,
             };
         });
     });
