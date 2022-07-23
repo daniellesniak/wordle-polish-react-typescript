@@ -31,8 +31,8 @@ const App: React.FC = () => {
 
     return (
         <>
-        <HelpModal isOpen={isHelpModalOpen} handleOpenHelpModal={setIsHelpModalOpen} />
-        <StatsModal isOpen={isStatsModalOpen} handleOpenStatsModal={setIsStatModalOpen} />
+        <HelpModal isOpen={isHelpModalOpen} handleOpenClose={setIsHelpModalOpen} />
+        <StatsModal isOpen={isStatsModalOpen} handleOpenClose={setIsStatModalOpen} />
         <TheHeader handleOpenHelpModal={setIsHelpModalOpen} handleOpenStatsModal={setIsStatModalOpen} />
         <div className="m-auto" style={{maxWidth: '500px'}}>
             
